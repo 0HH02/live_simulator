@@ -1,4 +1,17 @@
+from .event_generator import Event
+from .utils import Action
+
+
 class EnviromentInfo:
+    """
+    Represents the environment information for the simulator.
+
+    Attributes:
+        log (dict[Event, dict[int, Action]]): A dictionary that maps each events to a dictionary that maps each agent to the actions that he made in that event.
+
+        public_resources (dict[int, int]): A dictionary that represents the public resources available of each agent.
+    """
+
     def __init__(
         self,
         day: int,
