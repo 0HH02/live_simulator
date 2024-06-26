@@ -13,10 +13,12 @@ from .utils import group_prisioners_game
 
 
 class Simulator:
-    def __init__(self, agents: list[Agent], event_generator: EventGenerator):
+    def __init__(
+        self, agents: list[Agent], event_generator: EventGenerator, lost_per_day: int
+    ):
         self.event_generator: EventGenerator = event_generator
-        self.enviroment = Enviroment(agents)
-        self.lost_per_day = 100
+        self.enviroment = Enviroment(agents, lost_per_day)
+        self.lost_per_day = lost_per_day
 
     def run(self, days: int):
         for _ in range(days):
@@ -62,7 +64,9 @@ class Simulator:
             for agent in self.enviroment.agents_alive:
                 self.enviroment.agents[agent].passive_action(
                     EnviromentInfo(
-                        self.enviroment.log, self.enviroment.public_resources
+                        self.enviroment.day,
+                        self.enviroment.lost_per_day,
+                        self.enviroment.public_resources,
                     )
                 )
 
@@ -103,4 +107,5 @@ Simulator(
         PusilanimeAgent(),
     ],
     SimpleEventGenerator(),
+    100,
 ).run(1 * 360)
