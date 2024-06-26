@@ -1,5 +1,6 @@
 """
 """
+
 import random
 from abc import ABC, abstractmethod
 from numpy.random import poisson
@@ -36,6 +37,51 @@ class SimpleEventGenerator(EventGenerator):
         groups: list[list[int]] = self.select_groups(agents)
         resources: int = random.randint(-100, 350) * len(agents)
         return Event(event_type, groups, resources)
+
+    def select_groups(self, agents) -> list[list[int]]:
+        agents: list[int] = agents.copy()
+        random.shuffle(agents)
+        index = 0
+        result: list[list[int]] = []
+        while index < len(agents):
+            rand: int = poisson(lam=5)
+            end: int = min(index + rand, len(agents))
+            result.append(agents[index:end])
+            index: int = end
+        return result
+
+
+class ProbabilisticEventGenerator(EventGenerator):
+    def __init__(
+        self,
+        good_time_probabilities: float,
+        coop_event_probability: float,
+        good_coop_resource_probability: float,
+    ):
+        self.good_time_probabilities: float = good_time_probabilities
+        self.coop_event_probability: float = coop_event_probability
+        self.good_coop_resource_probability: float = good_coop_resource_probability
+
+    def GetNewEvent(self, agents: list[int]) -> Event:
+        event_type: EventType = self.select_event_type()
+        groups: list[list[int]] = self.select_groups(agents)
+
+        if event_type == EventType.COOP:
+            if random.random() < self.good_coop_resource_probability:
+                resources: int = random.randint(0, 350) * len(agents)
+            else:
+                resources: int = random.randint(-100, 0) * len(agents)
+        else:
+            if random.random() < self.good_time_probabilities:
+                resources: int = random.randint(0, 100) * len(agents)
+            else:
+                resources: int = random.randint(-100, 0) * len(agents)
+        return Event(event_type, groups, resources)
+
+    def select_event_type(self) -> EventType:
+        if random.random() < self.coop_event_probability:
+            return EventType.COOP
+        return EventType.SPECIAL
 
     def select_groups(self, agents) -> list[list[int]]:
         agents: list[int] = agents.copy()
