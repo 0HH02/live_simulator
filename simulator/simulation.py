@@ -1,4 +1,4 @@
-from agent import (
+from .agents.agent import (
     Agent,
     Action,
     EnviromentInfo,
@@ -7,9 +7,9 @@ from agent import (
     RandomAgent,
     ThiefAgent,
 )
-from event_generator import EventGenerator, SimpleEventGenerator
-from enviroment import Enviroment
-from utils import group_prisioners_game
+from .event_generator import EventGenerator, SimpleEventGenerator
+from .enviroment import Enviroment
+from .utils import group_prisioners_game
 
 
 class Simulator:

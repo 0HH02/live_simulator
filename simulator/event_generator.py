@@ -1,7 +1,9 @@
+"""
+"""
+import random
 from abc import ABC, abstractmethod
 from numpy.random import poisson
-import random
-from utils import EventType
+from .utils import EventType
 
 
 class Event:
