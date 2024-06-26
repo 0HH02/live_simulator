@@ -1,13 +1,16 @@
 from abc import ABC, abstractmethod
 import random
 
-from enviroment_info import EnviromentInfo, Event
+from enviroment_info import EnviromentInfo
+from event_generator import Event
 from utils import Action
 
 
 class Agent(ABC):
     @abstractmethod
-    def passive_action(self, enviroment_info: EnviromentInfo) -> None:
+    def passive_action(
+        self, enviroment_info: EnviromentInfo, decitions: dict[int, Action]
+    ) -> None:
         pass
 
     @abstractmethod
@@ -17,7 +20,9 @@ class Agent(ABC):
 
 class RandomAgent(Agent):
 
-    def passive_action(self, enviroment_info: EnviromentInfo) -> None:
+    def passive_action(
+        self, enviroment_info: EnviromentInfo, decitions: dict[int, Action]
+    ) -> None:
         pass
 
     def active_action(self, enviroment_info: EnviromentInfo, event: Event) -> Action:
