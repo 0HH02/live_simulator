@@ -3,8 +3,8 @@
 
 import random
 
-from .agents.agent import Agent
-from .enviroment_info import EnviromentInfo
+from agents.agent import Agent
+from enviroment_info import EnviromentInfo
 
 
 class Enviroment:

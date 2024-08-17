@@ -4,7 +4,7 @@
 import random
 from abc import ABC, abstractmethod
 from numpy.random import poisson
-from .utils import EventType
+from utils import EventType
 
 
 class Event:

@@ -5,8 +5,8 @@ This module contains the abstract class Agent and the basic implementation of it
 from abc import ABC, abstractmethod
 import random
 
-from ..enviroment_info import EnviromentInfo, Event
-from ..utils import Action
+from enviroment_info import EnviromentInfo, Event
+from utils import Action
 
 
 class Agent(ABC):

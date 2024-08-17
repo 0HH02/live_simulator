@@ -1,5 +1,5 @@
-from .event_generator import Event
-from .utils import Action
+from event_generator import Event
+from utils import Action
 
 
 class EnviromentInfo:
