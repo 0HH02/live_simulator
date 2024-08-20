@@ -12,6 +12,9 @@ class Action(Enum):
     EXPLOIT = 1
     INACT = 2
 
+    def __str__(self) -> str:
+        return super().__str__()[7:]
+
 
 def prisioners_game(desition1: Action, desition2: Action) -> int:
     if desition1 == Action.COOP and desition2 == Action.COOP:

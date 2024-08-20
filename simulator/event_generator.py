@@ -7,6 +7,13 @@ from numpy.random import poisson
 from utils import EventType
 
 
+class EventInfo:
+    def __init__(self, event_type: EventType, group: list[int], resources: int):
+        self.event_type: EventType = event_type
+        self.group: list[int] = group
+        self.resources: int = resources
+
+
 class Event:
     def __init__(self, event_type: EventType, groups: list[list[int]], resources: int):
         self.event_type: EventType = event_type
@@ -23,6 +30,14 @@ class Event:
 
     def __repr__(self) -> str:
         return str(self)
+
+    def getEventInfo(self, agent_id: int) -> EventInfo:
+        for group in self.groups:
+            if agent_id in group:
+                new_group: list[int] = group.copy()
+                new_group.remove(agent_id)
+                return EventInfo(self.event_type, new_group, self.resources)
+        raise ValueError("The agent is not in the event.")
 
 
 class EventGenerator(ABC):
@@ -68,14 +83,14 @@ class ProbabilisticEventGenerator(EventGenerator):
 
         if event_type == EventType.COOP:
             if random.random() < self.good_coop_resource_probability:
-                resources: int = random.randint(0, 350) * len(agents)
+                resources: int = random.randint(100, 300) * len(agents)
             else:
                 resources: int = random.randint(-100, 0) * len(agents)
         else:
             if random.random() < self.good_time_probabilities:
-                resources: int = random.randint(0, 100) * len(agents)
+                resources: int = random.randint(0, 50) * len(agents)
             else:
-                resources: int = random.randint(-100, 0) * len(agents)
+                resources: int = random.randint(-50, 0) * len(agents)
         return Event(event_type, groups, resources)
 
     def select_event_type(self) -> EventType:

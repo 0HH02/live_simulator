@@ -4,7 +4,7 @@
 import random
 
 from agents.agent import Agent
-from enviroment_info import EnviromentInfo
+from enviroment_info import EnviromentInfo, Event
 
 
 class Enviroment:
@@ -36,7 +36,7 @@ class Enviroment:
         self.agents: list[Agent] = agents
         self.agents_alive: list[int] = list(range(len(agents)))
         self.day = 0
-        self.log = {}
+        self.log: dict[Event, dict] = {}
         self.lost_per_day = lost_per_day
         self.public_resources: list[int] = [
             random.randint(300, 600) for x in range(len(agents))
