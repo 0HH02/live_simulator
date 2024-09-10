@@ -42,12 +42,17 @@ class Event:
 
 class EventGenerator(ABC):
     @abstractmethod
-    def GetNewEvent(self, agents) -> Event:
+    def GetNewEvent(self, agents, thief_toleration) -> Event:
         pass
 
 
 class SimpleEventGenerator(EventGenerator):
-    def GetNewEvent(self, agents: list[int]) -> Event:
+    def GetNewEvent(
+        self,
+        agents: list[int],
+        thief_toleration: int,
+        global_reputation: dict,
+    ) -> Event:
         event_type: EventType = random.choice(list(EventType))
         groups: list[list[int]] = self.select_groups(agents)
         resources: int = random.randint(-100, 350) * len(agents)
@@ -77,21 +82,42 @@ class ProbabilisticEventGenerator(EventGenerator):
         self.coop_event_probability: float = coop_event_probability
         self.good_coop_resource_probability: float = good_coop_resource_probability
 
-    def GetNewEvent(self, agents: list[int]) -> Event:
+    def GetNewEvent(
+        self,
+        agents: list[int],
+        thief_toleration: int,
+        global_reputation: dict,
+    ) -> Event:
         event_type: EventType = self.select_event_type()
         groups: list[list[int]] = self.select_groups(agents)
 
         if event_type == EventType.COOP:
             if random.random() < self.good_coop_resource_probability:
+                self.thief_control(thief_toleration, groups, global_reputation)
                 resources: int = random.randint(100, 300) * len(agents)
             else:
-                resources: int = random.randint(-100, 0) * len(agents)
+                resources: int = random.randint(-50, 0) * len(agents)
         else:
             if random.random() < self.good_time_probabilities:
                 resources: int = random.randint(0, 50) * len(agents)
             else:
-                resources: int = random.randint(-50, 0) * len(agents)
+                resources: int = random.randint(-10, 0) * len(agents)
         return Event(event_type, groups, resources)
+
+    def thief_control(
+        self,
+        thief_toleration: int,
+        groups: list[list[int]],
+        global_reputation: dict,
+    ):
+        for group in groups:
+            group[:] = [
+                agent
+                for agent in group
+                if agent not in global_reputation
+                or global_reputation[agent] > 30
+                or random.random() < thief_toleration
+            ]
 
     def select_event_type(self) -> EventType:
         if random.random() < self.coop_event_probability:

@@ -49,8 +49,7 @@ def group_prisioners_game(desitions: list[Action], resources: int) -> list[int]:
     list_result: list[int] = [0] * len(desitions)
     for d1 in range(len(desitions)):
         for d2 in range(len(desitions)):
-            if d1 != d2:
-
+            if d1 < d2:
                 if resources > 0:
                     list_result[d1] += prisioners_game(desitions[d1], desitions[d2])
                 else:

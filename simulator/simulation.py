@@ -4,7 +4,9 @@ from agents.agent import (
     RandomAgent,
     ThiefAgent,
     TipForTapAgent,
+    TipForTapSecureAgent,
     ABRAgent,
+    SearchAgent,
 )
 from event_generator import (
     EventGenerator,
@@ -22,12 +24,17 @@ from stats import Stats
 
 class Simulator:
     def __init__(
-        self, agents: list[Agent], event_generator: EventGenerator, lost_per_day: int
+        self,
+        agents: list[Agent],
+        event_generator: EventGenerator,
+        lost_per_day: int,
+        thief_toleration: int,
     ) -> None:
         self.event_generator: EventGenerator = event_generator
         self.enviroment = Enviroment(agents, lost_per_day)
         self.lost_per_day: int = lost_per_day
         self.stats = Stats(self.enviroment)
+        self.thief_toleration: int = thief_toleration
 
     def run(self, days: int) -> dict:
         for _ in range(days):
@@ -35,7 +42,9 @@ class Simulator:
             self.enviroment.next_day()
             print("Day: ", self.enviroment.day)
             new_event: Event = self.event_generator.GetNewEvent(
-                self.enviroment.agents_alive
+                self.enviroment.agents_alive,
+                self.thief_toleration,
+                self.enviroment.global_reputation,
             )
 
             print("Event: ", new_event)
@@ -55,18 +64,20 @@ class Simulator:
             self.update_enviroment(resources)
 
             if new_event.event_type == EventType.COOP:
-                for agent in self.enviroment.agents_alive:
-                    visible_desitions = self.get_visible_desitions(
-                        new_event, agent, True
-                    )
-                    self.enviroment.agents[agent].passive_action(
-                        EnviromentInfo(
-                            self.enviroment.day,
-                            self.enviroment.lost_per_day,
-                            self.enviroment.public_resources[agent],
-                        ),
-                        visible_desitions,
-                    )
+                for group in new_event.groups:
+                    for agent in group:
+                        visible_desitions: dict[int, Action] = (
+                            self.get_visible_desitions(new_event, agent, False)
+                        )
+                        self.enviroment.agents[agent].passive_action(
+                            EnviromentInfo(
+                                self.enviroment.day,
+                                self.enviroment.lost_per_day,
+                                self.enviroment.public_resources[agent],
+                                self.enviroment.agents_alive,
+                            ),
+                            visible_desitions,
+                        )
 
             print(f"Public resources: {self.enviroment.public_resources}")
             if new_event.event_type == EventType.COOP:
@@ -101,24 +112,50 @@ class Simulator:
     def decide(self, new_event: Event) -> None:
         print("Desitions: {")
         self.enviroment.log[new_event] = {}
-        for agent in self.enviroment.agents_alive:
-            enviroment_info: EnviromentInfo = self.enviroment.get_enviroment_from(agent)
-            event_info: EventInfo = new_event.getEventInfo(agent)
-            action: Action = self.enviroment.agents[agent].active_action(
-                enviroment_info, event_info
-            )
-            self.enviroment.log[new_event][agent] = action
-            print("\t", agent, ": ", action, "(", self.enviroment.agents[agent], ")")
+        for group in new_event.groups:
+            for agent in group:
+                enviroment_info: EnviromentInfo = self.enviroment.get_enviroment_from(
+                    agent
+                )
+                event_info: EventInfo = new_event.getEventInfo(agent)
+                action: Action = self.enviroment.agents[agent].active_action(
+                    enviroment_info, event_info
+                )
+                self.enviroment.log[new_event][agent] = action
+                self.set_reputation(agent, action)
+
+                print(
+                    "\t", agent, ": ", action, "(", self.enviroment.agents[agent], ")"
+                )
         print("}")
+
+    def set_reputation(self, agent: int, action: Action):
+        if agent in self.enviroment.global_reputation:
+            if action == Action.COOP:
+                self.enviroment.global_reputation[agent] = max(
+                    self.enviroment.global_reputation[agent] + 10, 100
+                )
+            elif action == Action.INACT:
+                self.enviroment.global_reputation[agent] = max(
+                    self.enviroment.global_reputation[agent] + 3, 100
+                )
+            else:
+                self.enviroment.global_reputation[agent] = max(
+                    self.enviroment.global_reputation[agent] - 30, 0
+                )
+        else:
+            self.enviroment.global_reputation[agent] = 50
 
     def get_visible_desitions(
         self, event: Event, agent: int, get_all: bool
     ) -> dict[int, Action]:
         if get_all:
             log = self.enviroment.log[event].copy()
-            log.pop(agent)
+            if agent in log:
+                log.pop(agent)
             return log
         else:
+
             group: list[int] = event.getEventInfo(agent).group
             return {agent: self.enviroment.log[event][agent] for agent in group}
 
@@ -134,18 +171,21 @@ def population_random_generator(length: int) -> list[Agent]:
         PusilanimeAgent,
         ThiefAgent,
         TipForTapAgent,
+        TipForTapSecureAgent,
         RandomAgent,
         ABRAgent,
+        SearchAgent,
     ]
-    return [random.choice(agent_classes)() for i in range(length)]
+    return [random.choice(agent_classes)(i) for i in range(length)]
 
 
 Simulator(
-    population_random_generator(400),
+    population_random_generator(100),
     ProbabilisticEventGenerator(
         good_coop_resource_probability=0.8,
         good_time_probabilities=0.7,
         coop_event_probability=0.8,
     ),
-    100,
+    50,
+    0.5,
 ).run(10 * 360)

@@ -17,10 +17,12 @@ class EnviromentInfo:
         day: int,
         lost_per_day: int,
         public_resources: dict,
+        agents_alive: list[int],
     ) -> None:
         self.day: int = day
         self.lost_per_day: int = lost_per_day
         self.public_resources: dict = public_resources
+        self.agents_alive: list[int] = agents_alive
 
     def __str__(self) -> str:
         return f"Day: {self.day}\nLost per day: {self.lost_per_day}\nPublic resources: {self.public_resources}"

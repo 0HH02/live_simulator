@@ -15,7 +15,9 @@ class Stats:
             "PusilanimeAgent": "green",
             "ThiefAgent": "red",
             "TipForTapAgent": "orange",
+            "TipForTapSecureAgent": "brown",
             "RandomAgent": "purple",
+            "SearchAgent": "yellow",
         }
         self.fig, self.ax = plt.subplots(figsize=(10, 6))
 
@@ -35,13 +37,16 @@ class Stats:
             agent_colors.append(self.agent_colors.get(agent_type, "gray"))
 
             # Obtener la acción del agente y definir el color del punto
-            action = self.environment.log[event][agent_id]
-            if action == Action.COOP:
-                action_colors.append("green")
-            elif action == Action.EXPLOIT:
-                action_colors.append("red")
-            elif action == Action.INACT:
-                action_colors.append("gray")
+            if agent_id in self.environment.log[event]:
+                action = self.environment.log[event][agent_id]
+                if action == Action.COOP:
+                    action_colors.append("green")
+                elif action == Action.EXPLOIT:
+                    action_colors.append("red")
+                elif action == Action.INACT:
+                    action_colors.append("gray")
+            else:
+                action_colors.append("black")
 
         bars = self.ax.bar(
             range(len(agents_alive)), agent_resources, color=agent_colors

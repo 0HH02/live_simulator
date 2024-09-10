@@ -41,9 +41,12 @@ class Enviroment:
         self.public_resources: list[int] = [
             random.randint(300, 600) for x in range(len(agents))
         ]
+        self.global_reputation: dict[Agent:int] = {}
 
     def get_enviroment_from(self, agent: int):
-        return EnviromentInfo(self.day, self.lost_per_day, self.public_resources)
+        return EnviromentInfo(
+            self.day, self.lost_per_day, self.public_resources, self.agents_alive
+        )
 
     def next_day(self) -> None:
         self.day += 1
