@@ -21,6 +21,8 @@ from utils import group_prisioners_game, Action
 import random
 from stats import Stats
 
+# from gemini import make_history
+
 
 class Simulator:
     def __init__(
@@ -82,6 +84,10 @@ class Simulator:
             print(f"Public resources: {self.enviroment.public_resources}")
             if new_event.event_type == EventType.COOP:
                 self.stats.plot_agent_resources(new_event)
+
+        with open("log.txt", "w") as f:
+            f.write("\n".join(self.enviroment.log))
+
         return self.enviroment.log
 
     def update_enviroment(self, resources) -> None:
@@ -188,4 +194,6 @@ Simulator(
     ),
     50,
     0.5,
-).run(10 * 360)
+).run(3)
+
+# make_history()
