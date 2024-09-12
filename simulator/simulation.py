@@ -7,6 +7,7 @@ from agents.agent import (
     TipForTapSecureAgent,
     ABRAgent,
     SearchAgent,
+    Resentful,
 )
 from event_generator import (
     EventGenerator,
@@ -21,7 +22,26 @@ from utils import group_prisioners_game, Action
 import random
 from stats import Stats
 
-# from gemini import make_history
+from gemini import make_history
+
+
+def dict_to_string(log: dict, agents: list[Agent]) -> str:
+    log_text = []
+    day = 1
+    for event, decisions in log.items():
+        # Convertir el evento a string
+        log_text.append(f"Day: {day}\n")
+        day += 1
+        event_str = str(event)
+        log_text.append(f"Event: {event_str}\n")
+
+        # Convertir el dict de decisiones a string
+        for agent, action in decisions.items():
+            agent_str = str(agent)
+            action_str = str(action)
+            log_text.append(f"\tAgent {agent_str}: {action_str} ( {agents[agent]} )\n")
+
+    return "".join(log_text)
 
 
 class Simulator:
@@ -85,8 +105,9 @@ class Simulator:
             if new_event.event_type == EventType.COOP:
                 self.stats.plot_agent_resources(new_event)
 
-        with open("log.txt", "w") as f:
-            f.write("\n".join(self.enviroment.log))
+        print(dict_to_string(self.enviroment.log, self.enviroment.agents))
+        with open("log.txt", "w", encoding="ISO-8859-1") as f:
+            f.write(dict_to_string(self.enviroment.log, self.enviroment.agents))
 
         return self.enviroment.log
 
@@ -181,12 +202,13 @@ def population_random_generator(length: int) -> list[Agent]:
         RandomAgent,
         ABRAgent,
         SearchAgent,
+        Resentful,
     ]
     return [random.choice(agent_classes)(i) for i in range(length)]
 
 
 Simulator(
-    population_random_generator(100),
+    population_random_generator(50),
     ProbabilisticEventGenerator(
         good_coop_resource_probability=0.8,
         good_time_probabilities=0.7,
@@ -194,6 +216,9 @@ Simulator(
     ),
     50,
     0.5,
-).run(3)
+).run(365)
 
-# make_history()
+print(make_history())
+
+
+# Implementar una matriz de amistad que guarde como metrica cuanta afinidad tiene un agente con otro de modo que el algoritmo de emparejamiento junte a los más afines juntos

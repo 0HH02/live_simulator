@@ -177,7 +177,6 @@ class TipForTapSecureAgent(Agent):
             return Action.INACT
 
 
-# Adaptative Based Reputation Agent
 class ABRAgent(Agent):
     def __init__(self, id) -> None:
         self.reputation: dict[int, int] = {}
@@ -322,3 +321,24 @@ class SearchAgent(Agent):
         start: int = random.randint(0, len(agents))
         end: int = min(start + rand, len(agents))
         return agents[start:end]
+
+
+class Resentful(Agent):
+    def __init__(self, id) -> None:
+        self.bad_people: list[int] = []
+        self.agent_id = id
+
+    def passive_action(
+        self, enviroment_info: EnviromentInfo, decitions: dict[int, Action]
+    ) -> None:
+        for agent, action in decitions.items():
+            if agent not in self.bad_people and action == Action.EXPLOIT:
+                self.bad_people.append(agent)
+
+    def active_action(
+        self, enviroment_info: EnviromentInfo, event: EventInfo
+    ) -> Action:
+        for agent in event.group:
+            if agent in self.bad_people:
+                return Action.INACT
+        return Action.COOP
