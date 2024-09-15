@@ -5,8 +5,6 @@ from enviroment import Enviroment, EnviromentInfo
 from event_generator import Event
 from utils import Action
 
-import matplotlib.pyplot as plt
-
 
 class Stats:
     def __init__(self, environment: Enviroment):
@@ -15,7 +13,7 @@ class Stats:
         self.avg_resources_per_day = []
         self.total_thefts = 0  # Total de robos acumulados
         self.thefts_per_day = []  # Robos por día
-
+        self.people_count_per_day = []
         # Colores asignados a cada tipo de agente
         self.agent_colors = {
             "ABRAgent": "blue",
@@ -28,12 +26,22 @@ class Stats:
             "Resentful": "magenta",
         }
 
-        # Crear un layout con 3 subplots verticales (una debajo de la otra)
-        self.fig, (self.ax1, self.ax2, self.ax3) = plt.subplots(
-            3, 1, figsize=(12, 16)
-        )  # Tres subplots verticales
+        # Activar el modo interactivo
+        plt.ion()
+
+        # Crear tres figuras independientes
+        self.fig1, self.ax1 = plt.subplots(figsize=(6, 4))
+        self.fig2, self.ax2 = plt.subplots(figsize=(6, 4))
+        self.fig3, self.ax3 = plt.subplots(figsize=(6, 4))
+        self.fig4, self.ax4 = plt.subplots(figsize=(6, 4))
+
+        # Configurar los títulos iniciales
+        self.ax1.set_title("Resources per Agent")
+        self.ax2.set_title("Average Resources per Day")
+        self.ax3.set_title("Agent Distribution (Alive)")
 
     def plot_agent_resources(self, event: Event, environment: Enviroment):
+        # Actualizar Gráfica 1: Resources per Agent
         self.ax1.clear()
         agents_alive = environment.agents_alive
         agent_resources = []
@@ -74,7 +82,7 @@ class Stats:
         self.ax1.set_xlabel("Agent ID")
         self.ax1.set_ylabel("Resources")
         self.ax1.set_title(f"Resources per Agent on Day {environment.day}")
-        # self.ax1.set_xticks(range(len(agents_alive)))
+        self.ax1.set_xticks(range(len(agents_alive)))
         self.ax1.set_xticklabels(agents_alive, rotation=45)
 
         # Añadir puntos encima de las barras
@@ -84,7 +92,7 @@ class Stats:
                 bar.get_height(),
                 "o",
                 color=action_colors[i],
-                markersize=4,
+                markersize=6,
             )
 
         # Calcular el promedio de recursos por tipo de agente
@@ -120,17 +128,20 @@ class Stats:
 
         self.ax1.legend()
 
-        # Actualizar la media de recursos
+        # Actualizar Gráfica 2 y 3
         self.update_avg_resources(environment)
-
-        # Actualizar los conteos de agentes por tipo
         self.update_agent_counts(environment)
 
-        # Mostrar los indicadores de robos
+        # Mostrar los indicadores de robos en Gráfica 3
         self.show_theft_stats()
 
-        # Actualizar todas las gráficas sin cerrar la ventana
-        plt.pause(0.4)
+        # Dibujar las figuras
+        self.fig1.canvas.draw()
+        self.fig2.canvas.draw()
+        self.fig3.canvas.draw()
+
+        # Pausar brevemente para actualizar
+        plt.pause(0.01)
 
     def update_avg_resources(self, environment: Enviroment):
         # Calcular el promedio de recursos de todos los agentes vivos
@@ -144,6 +155,9 @@ class Stats:
         self.days.append(environment.day)
         self.avg_resources_per_day.append(avg_resources)
 
+        # Almacenar el número de personas vivas
+        self.people_count_per_day.append(len(agents_alive))
+
         # Graficar la media de recursos por día
         self.ax2.clear()
         self.ax2.plot(self.days, self.avg_resources_per_day, marker="o", color="blue")
@@ -151,6 +165,14 @@ class Stats:
         self.ax2.set_ylabel("Average Resources")
         self.ax2.set_title("Average Resources per Day")
         self.ax2.grid(True)
+
+        # Graficar el número de personas vivas por día
+        self.ax4.clear()
+        self.ax4.plot(self.days, self.people_count_per_day, marker="o", color="green")
+        self.ax4.set_xlabel("Day")
+        self.ax4.set_ylabel("Number of People")
+        self.ax4.set_title("Number of People in Society Over Time")
+        self.ax4.grid(True)
 
     def update_agent_counts(self, environment: Enviroment):
         # Contar la cantidad de agentes vivos por tipo
@@ -189,21 +211,14 @@ class Stats:
                 counterclock=False,
             )
 
-            # Añadir leyenda
-            # self.ax3.legend(
-            #     wedges,
-            #     [
-            #         f"{agent_type} ({count})"
-            #         for agent_type, count in zip(types_with_agents, counts)
-            #     ],
-            #     title="Agent Types",
-            #     loc="upper right",
-            # )
-
             self.ax3.set_title("Agent Distribution (Alive)")
 
     def show_theft_stats(self):
-        # Mostrar los indicadores de robos
+        # Eliminar todos los textos anteriores
+        for text in self.ax1.texts:
+            text.remove()
+
+        # Mostrar los indicadores de robos en la gráfica de resources
         total_thefts_label = f"Total Thefts: {self.total_thefts}"
         daily_thefts_label = (
             f"Daily Thefts: {self.thefts_per_day[-1]}"
@@ -211,10 +226,24 @@ class Stats:
             else "Daily Thefts: 0"
         )
 
-        # Mostrar texto en la gráfica de pastel
-        self.ax3.text(
-            2, 0, total_thefts_label, fontsize=12, color="black", weight="bold"
+        # Mostrar texto en la gráfica de recursos por agente
+        self.ax1.text(
+            0.02,
+            0.95,
+            total_thefts_label,
+            fontsize=12,
+            color="black",
+            weight="bold",
+            transform=self.ax1.transAxes,
+            verticalalignment="top",
         )
-        self.ax3.text(
-            2, 0.2, daily_thefts_label, fontsize=12, color="black", weight="bold"
+        self.ax1.text(
+            0.02,
+            0.90,
+            daily_thefts_label,
+            fontsize=12,
+            color="black",
+            weight="bold",
+            transform=self.ax1.transAxes,
+            verticalalignment="top",
         )

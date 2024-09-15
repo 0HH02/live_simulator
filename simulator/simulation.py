@@ -22,7 +22,7 @@ from utils import group_prisioners_game, Action
 import random
 from stats import Stats
 
-# from gemini import make_history
+from gemini import make_history
 
 
 def dict_to_string(log: dict, agents: list[Agent]) -> str:
@@ -98,7 +98,7 @@ class Simulator:
                 for group in new_event.groups:
                     for agent in group:
                         visible_desitions: dict[int, Action] = (
-                            self.get_visible_desitions(new_event, agent, False, 0.5)
+                            self.get_visible_desitions(new_event, agent, False, 0)
                         )
                         self.enviroment.agents[agent].passive_action(
                             EnviromentInfo(

@@ -260,6 +260,7 @@ class SearchAgent(Agent):
         if deep == 0:
             return resources, Action.COOP
 
+        group: list[int] = self.select_group(enviroment.agents_alive)
         group: list[int] = self.select_groups_with_trust(
             enviroment.agents_alive, enviroment.matrix_of_trust
         )

@@ -90,7 +90,8 @@ class ProbabilisticEventGenerator(EventGenerator):
         matrix: list[list[int]],
     ) -> Event:
         event_type: EventType = self.select_event_type()
-        groups: list[list[int]] = self.select_groups_with_trust(agents, matrix)
+        groups: list[list[int]] = self.select_groups(agents)
+        # groups: list[list[int]] = self.select_groups_with_trust(agents, matrix)
 
         if event_type == EventType.COOP:
             if random.random() < self.good_coop_resource_probability:

@@ -40,7 +40,7 @@ def make_history() -> LiteralString:
             TipForTapSecure (lo mismo que el anterior pero este no roba, en cambio se mantiene al margen)
             ARB (Mantiene una memoria de la reputación de cada agente contra el que juega, promedia las reputaciones y si es mayor que 55 coopera y si no se mantiene al margen)
             Search (Simula 5 jugadas en el futuro y juega la decisión que maximice los recursos)
-            Tienen que verse los días desde el 1ro hasta el último pero puedes saltarte algunos si no los vevs relevante para la historia. Es fundamental que se vea la correlacion entre el Log y la narracion, donde se especifique el dia en concreto del que se habla""",
+            Tienen que verse los días desde el 1ro hasta el último pero puedes saltarte algunos si no los vevs relevante para la historia. Es fundamental que se vea la correlacion entre el Log y la narracion, donde se especifique el dia en concreto del que se habla. Escribe en español.""",
         },
         {
             "role": "user",
