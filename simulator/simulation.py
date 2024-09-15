@@ -22,7 +22,7 @@ from utils import group_prisioners_game, Action
 import random
 from stats import Stats
 
-from gemini import make_history
+# from gemini import make_history
 
 
 def dict_to_string(log: dict, agents: list[Agent]) -> str:
@@ -98,7 +98,7 @@ class Simulator:
                 for group in new_event.groups:
                     for agent in group:
                         visible_desitions: dict[int, Action] = (
-                            self.get_visible_desitions(new_event, agent, False)
+                            self.get_visible_desitions(new_event, agent, False, 0.5)
                         )
                         self.enviroment.agents[agent].passive_action(
                             EnviromentInfo(
@@ -215,16 +215,33 @@ class Simulator:
             self.enviroment.global_reputation[agent] = 50
 
     def get_visible_desitions(
-        self, event: Event, agent: int, get_all: bool
+        self, event: Event, agent: int, get_all: bool, noise: float
     ) -> dict[int, Action]:
         if get_all:
             log = self.enviroment.log[event].copy()
             if agent in log:
                 log.pop(agent)
+
+            # Add missunderstanding with 10% probability
+            for ag in log:
+                if random.random() < noise:
+                    log[ag] = random.choice([Action.COOP, Action.EXPLOIT, Action.INACT])
+
             return log
+
         else:
             group: list[int] = event.getEventInfo(agent).group
-            return {agent: self.enviroment.log[event][agent] for agent in group}
+            desitions: dict[int, Action] = {
+                agent: self.enviroment.log[event][agent] for agent in group
+            }
+            # Add missunderstanding with 10% probability
+            for ag in desitions:
+                if random.random() < noise:
+                    desitions[ag] = random.choice(
+                        [Action.COOP, Action.EXPLOIT, Action.INACT]
+                    )
+
+            return desitions
 
     def str(self) -> str:
         return f"Agents: {self.enviroment.agents}, Day: {self.enviroment.day}, Log: {self.enviroment.log}, Public resources: {self.enviroment.public_resources}"
