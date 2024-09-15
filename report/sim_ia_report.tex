@@ -1,0 +1,145 @@
+\title{IA-Simulacion}
+\author{Pepito tey}
+
+\documentclass{article}
+\begin{document}
+
+\maketitle
+\newpage
+\tableofcontents
+\newpage
+
+\section{Introduci\'on}
+La l\'{\i}nea de este trabajo comenz\'o con la siguiente idea: ¿Que pasar\'{\i}a si pudieramos simular diferentes civilizaciones, por
+decirlo de alguna manera, con diferentes ideolog\'{\i}as, tipo de gobierno, recursos, entorno. Y a la vez cada civilizaci\'on tendria
+personas con diferentes formas de pensar, actuar y relacionarse, con moralidades diferentes?. ¿Y si pudieramos comparar pseudo-objetivamente
+a esas civilizaciones en base a la cantidad de d\'{\i}as que sobreviven?. No fue dif\'{\i}cil darse cuenta que era una idea muy ambiciosa, y por
+tanto irrealizable como tema de este trabajo. Sin embargo, esa idea sirvi\'o de inspiraci\'on para lo que finalmente se realiz\'o.
+
+\subsection*{¿En qu\'e consiste el dilema del prisionero?}
+El dilema del prisionero es un problema muy conocido en la teor\'{\i}a de juegos. Se plantea de la siguiente manera: dos personas son arrestadas por
+un crimen que cometieron juntas. Cada una es interrogada por separado y se les ofrece la posibilidad de traicionar delantando a la otra persona. Si ninguno de
+ellos traiciona al otro, ambos reciben una condena de 1 a\~no. Si alguno traiciona, queda libre y el otro recibe una condena de 3 a\~nos. Si ambos traicionan,
+ambos reciben una condena de 2 a\~nos.
+
+Este es solo un ejemplo de una familia de juegos llamados juegos de suma no nula o juegos de suma no cero. Pero en general los otros juegos de la misma familia
+tienen la misma estructura: hay dos jugadores, cada uno se enfrenta a la decisi\'on de cooperar o traicionar al otro, y cada acci\'on produce una ganancia o
+p\'erdida de recursos para cada jugador. Por supuesto, en estos juegos, la estrategia \'optima es traicionar al otro jugador, ya que es la jugada que garantiza
+la mayor ganancia m\'{\i}nima. Sin embargo, lo interesante de esto, es que cambia radicalmente si se juegan m\'as rondas.
+
+\subsection*{M\'as de dos prisioneros}
+Como se mencion\'o anteriormente, este trabajo se inspir\'o en la idea de simular civilizaciones. Por lo tanto, surgi\'o la idea de simplificar esto
+a un dilema del prisionero con m\'as de dos jugadores, simulando as\'{\i}, de alguna manera, una civilizaci\'on. Las reglas se abordar\'an en detalle
+m\'as adelante.
+\newpage
+
+\section{Reglas del juego}
+\vspace*{5mm}
+\subsection{Objetivo}
+Cada jugador empieza con una cantidad inicial de recursos aleatorios(como en la vida real). Y cada d\'{\i}a pierde una cantidad fija de recursos, que pueden
+representar perfectamente los recursos que gastaron ese d\'{\i}a con tal de sobrevivir. Cada jugador tendr\'a oportunidades de ganar o perder recursos al igual
+que en el dilema del prisionero, la diferencia es que aqu\'{\i} cada ronda o juego se hace colaborativamente entre todos los jugadores de la civilizaci\'on.
+El objetivo de cada juegador es simplemente sobrevivir el mayor n\'umero de d\'{\i}as posibles.
+
+\subsection{Ronda}
+Cada ronda del juego representa un d\'{\i}a de la civilizaci\'on, cada d\'{\i}a surge un evento nuevo que puede ser de diferentes tipos, cada evento intenta
+simular de la forma m\'as parecida posible situaciones que podr\'{\i}an ser reales en una civilizaci\'on de este estilo.
+
+\paragraph*{Eventos cooperativos:}
+Estos eventos tienen asociado una cantidad positiva o negativa de recursos, ya que pueden ser eventos positivos o negativos. Estos tipos de eventos hacen alusi\'on a situaciones del estilo:
+\begin{itemize}
+    \item Ha aparecido una mina de carb\'on a 5km de distancia es necesario ir a minar el carb\'on.
+    \item El trigo ha madurado y es necesario cosecharlo.
+    \item Se necesita madera en la civilizaci\'on y se necesita ir a talar \'arboles.
+    \item Es necesario crear pozos para tener un f\'acil acceso al agua potable en vez de acarrear agua desde el r\'{\i}o.
+    \item Con el fin de conseguir carne se est\'an agrupando en el pueblo para ir de cacer\'{\i}a.
+    \item Las fuertes lluvias han tra\'{\i}do inundaciones al pueblo, es necesario la colaboraci\'on de todos para reparar los destrozos.
+\end{itemize}
+Aqu\'{\i} los pobladores se dividen en grupos aleatoriamente, y empieza el juego. Cada uno debe tomar una decisi\'on, que puede ser: \textbf{cooperar},
+\textbf{explotar} o \textbf{trabajar en solitario}. Luego esa decisi\'on se "enfrenta" con las decisiones de los otros integrantes de su grupo siguiendo la
+siguiente matriz de decisisones y ganancias.
+\vspace*{2mm}
+\begin{center}
+    \begin{tabular}{|l|c|c|c|}
+        \hline
+                 & Cooperar & Explotar & Solo  \\
+        \hline
+        Cooperar & (10,10)  & (0,15)   & (8,8) \\
+        \hline
+        Explotar & (15,0)   & (0,0)    & (3,8) \\
+        \hline
+        Solo     & (8,8)    & (8,3)    & (8,8) \\
+        \hline
+    \end{tabular}
+\end{center}
+Podemos pensarlo de la siguiente manera: Aparece una mina de carb\'on y van varios pobladores a minar. Una persona por si sola solo
+puede extraer 8 puntos de recursos, si coopera con otra persona entre los dos pueden ser m\'as eficientes al especializarce y logran
+extraer 20 puntos, que se reparten equitativamente. Si uno explota y el otro coopera, como hay uno que le interesa mas robar que trabajar,
+entre los dos solo logran conseguir 15 puntos, pero estos solo se los queda el que decidi\'o explotar. Si ambos explotan, trabaja y no
+se ponen de acuerdo as\'{\i} que nadie obtiene nada. Y si uno explota y el otro decide ir por su cuenta el que trabaja solo ya vimos que
+solo puede obtener 8 puntos, y el que explota frustrado porque no puede robar pues trabaja poco y solo obtiene 3 puntos.
+
+Y as\'{\i} cada jugador acumula puntos en base a la decisi\'on que tom\'o y las decisiones que tomaron cada uno de los otros jugadores.
+Luego de eso los recursos que ten\'{\i}a asignado ese evento se reparten en base a la cantidad de puntos de cada jugador en su grupo.
+Se hace evidente que el objetivo es obtener la mayor cantidad de puntos en los eventos positivos y perder la menor cantidad en los eventos
+negativos.
+
+\paragraph*{Eventos especiales: } estos son mas f\'aciles de comprender, son eventos que pueden afectar a uno o varios pobladores, rest\'andoles
+o otorg\'andoles recursos de fñorma aleatoria. Se podr\'{\i}an comparar con situaciones del estilo:
+\begin{itemize}
+    \item La vaca del poblador (insertar nombre gen\'erico) tuvo un ternero, lo cual aumenta su cantidad de recursos.
+    \item Un \'arbol cay\'o sobre la casa de (insertar nombre gen\'erico) debido a un fuerte viento.
+    \item Este verano hubo una abuntante lluvia lo cual es bueno para los cultivos.
+    \item Se esparci\'o una enfermedad que afect\'o al ganado de todo el pueblo.
+\end{itemize}
+
+\subsection{Otras mec\'anicas del juego}
+Hay una serie de mec\'acnicas opcionales en este juego, que pueden darle m\'as o menos ventaja a alguna estrategia en particular.
+A continuaci\'on ponemos algunas de ellas.
+\begin{itemize}
+    \item En principio las decisiones tomadas por cada poblador son privadas, es decir cada poblador solo conoce a lo largo del juego las decisiones
+          que tomaron los que estaban en su mismo grupo en cada ronda, desconociendo lo que pas\'o en los dem\'as grupos. Opcionalmente es posible hacer las
+          decisiones p\'ublicas, y que cada poblador sepa cada decisi\'on tomaron los dem\'as, simulando as\'i el chisme o la comunicaci\'on entre pobladores.
+          Veremos m\'as adelante que influencia tiene esto sobre el juego.
+    \item Otra mec\'anica adicional es simular la reputaci\'on de los aldeanos, en base a antiguos comportamientos, esto podr\'{\i}a ser informaci\'on
+          adicional para los pobladores, ya que tienen un dato cualitativo del comportamiento de otros.
+    \item Apoy\'andose en la reputaci\'on mencionada anteriormente es posible a\~nadir una especie de juicio comunitario o "polic\'ia", que se encarga de que existe una posibilidad
+          cada d\'{\i}a de que las personas con muy baja reputaci\'on se les prohiba participar en eventos cooperativos. Siendo esto una forma de castigo impuesto
+          por los pobladores o por una "polic\'{\i}a" hacia los que peor comportamiento tienen en el pueblo.
+    \item ¿Qui\'en en la vida real no ha malinterpretado las intenciones o acciones de otras personas debido a una falta de comunicaci\'on?. Pues esta es otra de las
+          mec\'anicas adicionales del juego, exites una posibilidad de la elecci\'on de un jugador sea malinterpretada por los dem\'as. Por ejemplo el jugador (insertar nombre gen\'erico)
+          quiso apoyar a la construcci\'on de la plaza del pueblo, pero debido a ciertas circunstancias los dem\'as pensaron que estaba holgazaneando y rob\'andose los
+          materiales dados por la iglesia para la construcci\'on. Consecuencia: su reputaci\'on baj\'o debido a eso y todos pensaron que \'el hab\'{\i}a robado.
+\end{itemize}
+\newpage
+
+\section{Estrategias}
+En estos juegos de suma no cero la parte m\'as importante es la estrategia que se elige para jugar. Que reglas o comportamientos va a mostrar cada jugador en cada ronda.
+En el tradicional juego del dilema del prisionero y otros exite una serie de estrategias o jugadores b\'asicos, los cu\'ales mostramos a continuaci\'on.
+\begin{itemize}
+    \item \textbf{Always cooperate} es una estrategia b\'asica que simplemente siempre elige la opci\'on de cooperar.
+    \item \textbf{Always cheat} al igual que la anterior, solo que esta siempre elige explotar.
+    \item \textbf{Grudger} o rencoroso, siempre coopera hasta que lo enga\~nan, a partir de ah\'i siempre roba.
+    \item \textbf{Random} es la estrategia m\'as simple, no creo ni que tenga que explicarla.
+    \item \textbf{Tit for tat} es uno de los m\'as conocidos, aunque tambi\'en se conoce por los nombres de ojo por ojo, the golden rule. Simplemente empieza cooperando
+          y despu\'es solo copia la anterior jugada del oponente. Aunque es mucho mejor verlo de la siguiente forma, siempre coopera y cuando le roban, el devuelve el
+          golpe una sola vez, despu\'es sigue cooperando. Es una estrategia bastante eficiente a pesar de su sencillez.
+    \item \textbf{Tit for two tats} es literalmente el tit for tat solo que este coopera y solo roba cuando le robas dos veces seguidas, es decir: es m\'as tolerante.
+\end{itemize}
+Por supuesto todas estas estrategias son del juego tradicional, aunque son f\'acilmente adaptables a nuestras reglas. Adem\'as de estos jugadores b\'asicos
+hemos a\~nadido nuestras propias estrategias de juego, algunas mas inteligentes que otras. Las cu\'ales exponemos a continuaci\'on.
+\begin{itemize}
+    \item \textbf{Exploit and explore} es una estrategia sencilla, que sigue estas dos reglas: de vez en cuando juega aleatoriamente, el resto del tiempo juega la jugada
+          que m\'as puntos le ha conseguido anteriormente.
+    \item \textbf{Prophet} intenta predecir el futuro de los pr\'oximos 5 d\'{\i}as y toma la jugada que maximize sus recursos.
+    \item \textbf{Detective} va tratando de deducir las estrategias de los pobladores a partir de sus jugadas conocidas, y juega lo que m\'as le conviene en base a predecir
+          que jugar\'an los dem\'as dadas sus estrategias.
+    \item \textbf{Judge} basa sus decisiones en la reputaci\'on de los pobladores de su grupo. No colaborar\'a con la gente que juzgue de manera negativa.
+\end{itemize}
+\newpage
+
+\section{Modelando el juego}
+
+\subsection{Modelaci\'on de los agentes}
+
+\end{document}
