@@ -260,7 +260,9 @@ class SearchAgent(Agent):
         if deep == 0:
             return resources, Action.COOP
 
-        group: list[int] = self.select_group(enviroment.agents_alive)
+        group: list[int] = self.select_groups_with_trust(
+            enviroment.agents_alive, enviroment.matrix_of_trust
+        )
 
         desitions = []
         for agent in group:
@@ -276,6 +278,16 @@ class SearchAgent(Agent):
             else:
                 desitions.append(Action.INACT)
                 copy_reputation[agent] += 3
+
+        for agent in group:
+            for other in group:
+                if agent != other:
+                    if enviroment.matrix_of_trust[other] == Action.EXPLOIT:
+                        enviroment.matrix_of_trust[agent][other] -= 0.2
+                    elif enviroment.matrix_of_trust[other] == Action.INACT:
+                        enviroment.matrix_of_trust[agent][other] += 0.05
+                    elif enviroment.matrix_of_trust[other] == Action.COOP:
+                        enviroment.matrix_of_trust[agent][other] += 0.1
 
         event_resources: int = random.randint(-100, 300) * len(desitions)
 
@@ -313,6 +325,57 @@ class SearchAgent(Agent):
         else:
             return exploit_reosurce, Action.EXPLOIT
 
+    def ordenar_por_posiciones(self, array: list[int]) -> list[int]:
+        arr: list[int] = array.copy()
+        # Paso 2: Crear una lista de pares (valor, índice)
+        pares: list[tuple[int, int]] = [
+            (valor, indice) for indice, valor in enumerate(arr)
+        ]
+
+        # Paso 3: Ordenar la lista de pares en orden descendente por el valor
+        pares_ordenados: list[tuple[int, int]] = sorted(
+            pares, key=lambda x: x[0], reverse=True
+        )
+
+        # Paso 4: Extraer los índices ordenados
+        indices_ordenados: list[int] = [par[1] for par in pares_ordenados]
+
+        # Paso 5: Devolver los índices ordenados
+        return indices_ordenados
+
+    def select_groups_with_trust(self, agents, matrix) -> list[list[int]]:
+        agents: list[int] = agents.copy()
+        random.shuffle(agents)
+        result: list[list[int]] = []
+        while agents:
+            rand: int = poisson(lam=5)
+            group = []
+            group.append(agents[0])
+            indices_ordenados: list[int] = self.ordenar_por_posiciones(
+                matrix[agents[0]]
+            )
+            for i in range(len(indices_ordenados)):
+                if rand == 0:
+                    break
+                for roommate in group:
+                    if not (
+                        indices_ordenados[i] != roommate
+                        and indices_ordenados[i] in agents
+                        and random.random() < matrix[roommate][indices_ordenados[i]]
+                    ):
+                        break
+                else:
+                    group.append(indices_ordenados[i])
+                    agents.remove(indices_ordenados[i])
+                    rand -= 1
+
+            result.append(group)
+            agents.remove(agents[0])
+        for group in result:
+            if self.agent_id in group:
+                return group
+        return []
+
     def select_group(self, agents_alive: list[int]) -> list[int]:
         agents: list[int] = agents_alive.copy()
         agents.remove(self.agent_id)
@@ -342,3 +405,6 @@ class Resentful(Agent):
             if agent in self.bad_people:
                 return Action.INACT
         return Action.COOP
+
+
+# Jugador que juegue random o juega la jugada que le ha hecho ganar más puntos en el pasado

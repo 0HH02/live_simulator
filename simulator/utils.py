@@ -25,6 +25,8 @@ def prisioners_game(desition1: Action, desition2: Action) -> int:
         return 15
     if desition1 == Action.EXPLOIT and desition2 == Action.EXPLOIT:
         return 0
+    if desition1 == Action.EXPLOIT and desition2 == Action.INACT:
+        return 3
     return 8
 
 
@@ -37,6 +39,8 @@ def negative_prisioners_game(desition1: Action, desition2: Action) -> int:
         return 0
     if desition1 == Action.EXPLOIT and desition2 == Action.EXPLOIT:
         return -15
+    if desition1 == Action.EXPLOIT and desition2 == Action.INACT:
+        return -10
     return -7
 
 
