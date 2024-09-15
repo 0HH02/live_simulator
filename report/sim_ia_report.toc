@@ -1,0 +1,8 @@
+\contentsline {section}{\numberline {1}Introduci\'on}{3}{}%
+\contentsline {section}{\numberline {2}Reglas del juego}{4}{}%
+\contentsline {subsection}{\numberline {2.1}Objetivo}{4}{}%
+\contentsline {subsection}{\numberline {2.2}Ronda}{4}{}%
+\contentsline {subsection}{\numberline {2.3}Otras mec\'anicas del juego}{5}{}%
+\contentsline {section}{\numberline {3}Estrategias}{7}{}%
+\contentsline {section}{\numberline {4}Modelando el juego}{8}{}%
+\contentsline {subsection}{\numberline {4.1}Modelaci\'on de los agentes}{8}{}%
