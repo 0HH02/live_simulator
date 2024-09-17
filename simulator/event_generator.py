@@ -87,9 +87,11 @@ class ProbabilisticEventGenerator(EventGenerator):
         agents: list[int],
         thief_toleration: int,
         global_reputation: dict,
+        matrix: list[list[int]],
     ) -> Event:
         event_type: EventType = self.select_event_type()
         groups: list[list[int]] = self.select_groups(agents)
+        # groups: list[list[int]] = self.select_groups_with_trust(agents, matrix)
 
         if event_type == EventType.COOP:
             if random.random() < self.good_coop_resource_probability:
@@ -134,4 +136,53 @@ class ProbabilisticEventGenerator(EventGenerator):
             end: int = min(index + rand, len(agents))
             result.append(agents[index:end])
             index: int = end
+        return result
+
+    def ordenar_por_posiciones(self, array: list[int]) -> list[int]:
+        arr: list[int] = array.copy()
+        # Paso 2: Crear una lista de pares (valor, índice)
+        pares: list[tuple[int, int]] = [
+            (valor, indice) for indice, valor in enumerate(arr)
+        ]
+
+        # Paso 3: Ordenar la lista de pares en orden descendente por el valor
+        pares_ordenados: list[tuple[int, int]] = sorted(
+            pares, key=lambda x: x[0], reverse=True
+        )
+
+        # Paso 4: Extraer los índices ordenados
+        indices_ordenados: list[int] = [par[1] for par in pares_ordenados]
+
+        # Paso 5: Devolver los índices ordenados
+        return indices_ordenados
+
+    def select_groups_with_trust(self, agents, matrix) -> list[list[int]]:
+        agents: list[int] = agents.copy()
+        random.shuffle(agents)
+        result: list[list[int]] = []
+        while agents:
+            rand: int = poisson(lam=5)
+            group = []
+            group.append(agents[0])
+            indices_ordenados: list[int] = self.ordenar_por_posiciones(
+                matrix[agents[0]]
+            )
+            for i in range(len(indices_ordenados)):
+                if rand == 0:
+                    break
+                for roommate in group:
+                    if not (
+                        indices_ordenados[i] != roommate
+                        and indices_ordenados[i] in agents
+                        and random.random() < matrix[roommate][indices_ordenados[i]]
+                    ):
+                        break
+                else:
+                    group.append(indices_ordenados[i])
+                    agents.remove(indices_ordenados[i])
+                    rand -= 1
+
+            result.append(group)
+            agents.remove(agents[0])
+
         return result

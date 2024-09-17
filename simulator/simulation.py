@@ -51,12 +51,16 @@ class Simulator:
         event_generator: EventGenerator,
         lost_per_day: int,
         thief_toleration: int,
+        reproduction_rate: int,
+        reproduction_density: int,
     ) -> None:
         self.event_generator: EventGenerator = event_generator
         self.enviroment = Enviroment(agents, lost_per_day)
         self.lost_per_day: int = lost_per_day
         self.stats = Stats(self.enviroment)
         self.thief_toleration: int = thief_toleration
+        self.reproduction_rate: int = reproduction_rate
+        self.reproduction_density: int = reproduction_density
 
     def run(self, days: int) -> dict:
         for _ in range(days):
@@ -67,8 +71,9 @@ class Simulator:
                 self.enviroment.agents_alive,
                 self.thief_toleration,
                 self.enviroment.global_reputation,
+                self.enviroment.trust_matrix,
             )
-
+            # print("Trust: ", self.enviroment.trust_matrix)
             print("Event: ", new_event)
 
             if new_event.event_type == EventType.COOP:
@@ -77,7 +82,11 @@ class Simulator:
 
             elif new_event.event_type == EventType.SPECIAL:
                 resources = {}
-                for agent in self.enviroment.agents_alive:
+                special_agent: list[int] = random.sample(
+                    self.enviroment.agents_alive,
+                    random.randint(1, len(self.enviroment.agents_alive)),
+                )
+                for agent in special_agent:
                     resources[agent] = new_event.resources // len(
                         self.enviroment.agents_alive
                     )
@@ -89,7 +98,7 @@ class Simulator:
                 for group in new_event.groups:
                     for agent in group:
                         visible_desitions: dict[int, Action] = (
-                            self.get_visible_desitions(new_event, agent, False)
+                            self.get_visible_desitions(new_event, agent, False, 0)
                         )
                         self.enviroment.agents[agent].passive_action(
                             EnviromentInfo(
@@ -97,13 +106,14 @@ class Simulator:
                                 self.enviroment.lost_per_day,
                                 self.enviroment.public_resources[agent],
                                 self.enviroment.agents_alive,
+                                self.enviroment.trust_matrix,
                             ),
                             visible_desitions,
                         )
 
             print(f"Public resources: {self.enviroment.public_resources}")
             if new_event.event_type == EventType.COOP:
-                self.stats.plot_agent_resources(new_event)
+                self.stats.plot_agent_resources(new_event, self.enviroment)
 
         print(dict_to_string(self.enviroment.log, self.enviroment.agents))
         with open("log.txt", "w", encoding="ISO-8859-1") as f:
@@ -124,6 +134,27 @@ class Simulator:
             for agent in self.enviroment.agents_alive
             if self.enviroment.public_resources[agent] > 0
         ]
+        if self.enviroment.day % self.reproduction_rate == 0:
+
+            alive_agents_with_resources = {
+                agent: self.enviroment.public_resources[agent]
+                for agent in self.enviroment.agents_alive
+            }
+
+            sorted_agents: list[tuple[int, int]] = sorted(
+                alive_agents_with_resources.items(), key=lambda x: x[1], reverse=True
+            )
+
+            top_agents: list[int] = [
+                agent for agent, _ in sorted_agents[: self.reproduction_density + 1]
+            ]
+
+            new_agents: list[Agent] = self.enviroment.agents[:]
+            new_agents.extend([self.enviroment.agents[agent] for agent in top_agents])
+
+            self.enviroment: Enviroment = self.enviroment.copy(
+                new_agents=new_agents, reproduction_density=self.reproduction_density
+            )
 
     def play_the_game(self, new_event: Event) -> dict:
         general_resources = {}
@@ -154,6 +185,16 @@ class Simulator:
                 print(
                     "\t", agent, ": ", action, "(", self.enviroment.agents[agent], ")"
                 )
+            for agent in group:
+                for other in group:
+                    if agent != other:
+                        if self.enviroment.log[new_event][other] == Action.EXPLOIT:
+                            self.enviroment.trust_matrix[agent][other] -= 0.2
+                        elif self.enviroment.log[new_event][other] == Action.INACT:
+                            self.enviroment.trust_matrix[agent][other] += 0.05
+                        elif self.enviroment.log[new_event][other] == Action.COOP:
+                            self.enviroment.trust_matrix[agent][other] += 0.1
+
         print("}")
 
     def set_reputation(self, agent: int, action: Action):
@@ -174,17 +215,33 @@ class Simulator:
             self.enviroment.global_reputation[agent] = 50
 
     def get_visible_desitions(
-        self, event: Event, agent: int, get_all: bool
+        self, event: Event, agent: int, get_all: bool, noise: float
     ) -> dict[int, Action]:
         if get_all:
             log = self.enviroment.log[event].copy()
             if agent in log:
                 log.pop(agent)
-            return log
-        else:
 
+            # Add missunderstanding with 10% probability
+            for ag in log:
+                if random.random() < noise:
+                    log[ag] = random.choice([Action.COOP, Action.EXPLOIT, Action.INACT])
+
+            return log
+
+        else:
             group: list[int] = event.getEventInfo(agent).group
-            return {agent: self.enviroment.log[event][agent] for agent in group}
+            desitions: dict[int, Action] = {
+                agent: self.enviroment.log[event][agent] for agent in group
+            }
+            # Add missunderstanding with 10% probability
+            for ag in desitions:
+                if random.random() < noise:
+                    desitions[ag] = random.choice(
+                        [Action.COOP, Action.EXPLOIT, Action.INACT]
+                    )
+
+            return desitions
 
     def str(self) -> str:
         return f"Agents: {self.enviroment.agents}, Day: {self.enviroment.day}, Log: {self.enviroment.log}, Public resources: {self.enviroment.public_resources}"
@@ -214,11 +271,10 @@ Simulator(
         good_time_probabilities=0.7,
         coop_event_probability=0.8,
     ),
-    50,
-    0.5,
+    lost_per_day=60,
+    thief_toleration=1,
+    reproduction_rate=20,
+    reproduction_density=10,
 ).run(365)
 
 print(make_history())
-
-
-# Implementar una matriz de amistad que guarde como metrica cuanta afinidad tiene un agente con otro de modo que el algoritmo de emparejamiento junte a los más afines juntos

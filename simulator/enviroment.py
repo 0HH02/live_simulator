@@ -2,6 +2,7 @@
 """
 
 import random
+import numpy as np
 
 from agents.agent import Agent
 from enviroment_info import EnviromentInfo, Event
@@ -42,10 +43,45 @@ class Enviroment:
             random.randint(300, 600) for x in range(len(agents))
         ]
         self.global_reputation: dict[Agent:int] = {}
+        self.trust_matrix: list[list[int]] = [
+            [50 for j in range(len(agents))] for i in range(len(agents))
+        ]
+        self.generation = 1
 
-    def get_enviroment_from(self, agent: int):
+    def copy(self, new_agents=None, reproduction_density=1):
+        new_env = Enviroment(
+            new_agents if new_agents is not None else self.agents,
+            self.lost_per_day,
+        )
+        new_env.agents_alive = self.agents_alive[:] + [
+            index
+            for index in range(
+                len(self.agents) + 1, len(self.agents) + 1 + reproduction_density
+            )
+        ]
+
+        new_env.day = self.day
+        new_env.log = self.log.copy()
+        new_env.public_resources = self.public_resources[:] + [
+            random.randint(300, 600) for x in range(reproduction_density + 1)
+        ]
+        new_env.global_reputation = self.global_reputation.copy()
+        new_env.trust_matrix.extend(
+            [
+                [50 for _ in range(len(self.agents) + reproduction_density)]
+                for _ in range(reproduction_density)
+            ]
+        )
+        new_env.generation = self.generation + 1
+        return new_env
+
+    def get_enviroment_from(self, agent: int) -> EnviromentInfo:
         return EnviromentInfo(
-            self.day, self.lost_per_day, self.public_resources, self.agents_alive
+            self.day,
+            self.lost_per_day,
+            self.public_resources,
+            self.agents_alive,
+            self.trust_matrix,
         )
 
     def next_day(self) -> None:
