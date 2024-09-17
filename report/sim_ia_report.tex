@@ -1,7 +1,18 @@
-\title{IA-Simulacion}
-\author{Pepito tey}
-
 \documentclass{article}
+
+\usepackage{hyperref}
+
+\renewcommand{\contentsname}{Tabla de Contenidos}
+
+
+
+\title{Simulando una sociedad a partir del dilema del prisionero}
+\author{Carlos Mario Chang Jardinez C312\\Ernesto Rousell Zurita C312\\Carlos Manuel Garc\'{\i}a Rodr\'{\i}guez C312\\\\	
+\small{\sc Ciencia de la Computaci\'on}\\
+\small{\sc Facultad de Matem\'atica y Computaci\'on}\\
+\small{\sc Universidad de La Habana. Cuba}
+}
+
 \begin{document}
 
 \maketitle
@@ -18,9 +29,16 @@ tanto irrealizable como tema de este trabajo. Sin embargo, esa idea sirvi\'o de 
 
 \subsection*{¿En qu\'e consiste el dilema del prisionero?}
 El dilema del prisionero es un problema muy conocido en la teor\'{\i}a de juegos. Se plantea de la siguiente manera: dos personas son arrestadas por
-un crimen que cometieron juntas. Cada una es interrogada por separado y se les ofrece la posibilidad de traicionar delantando a la otra persona. Si ninguno de
-ellos traiciona al otro, ambos reciben una condena de 1 a\~no. Si alguno traiciona, queda libre y el otro recibe una condena de 3 a\~nos. Si ambos traicionan,
-ambos reciben una condena de 2 a\~nos.
+un crimen que cometieron juntas. Cada una es interrogada por separado y se les propone que traicionen y delaten al otro a cambio de una reducci\'on de
+la condena, entonces las diferentes opciones que tienen ante s\'{\i} los criminales son las siguientes:
+
+\begin{itemize}
+      \item Si ninguno de ellos traiciona al otro ambos reciben una condena de 1 a\~no.
+      \item Si uno de ellos delata al otro, el primero queda libre mientras que el otro recibe una condena de 3 a\~nos.
+      \item Si ambos se delatan mutuamente reciben una condena de 2 a\~nos.
+\end{itemize}
+¿Entonces? ¿Qu\'e es lo m\'as conveniente para cada uno de los prisioneros?¿Y si se juegan varias veces seguidas?. Ese es el sentido del juego, este
+problema es muy interesante, y existen muchos enfoques desde donde se puede ver y analizar.
 
 Este es solo un ejemplo de una familia de juegos llamados juegos de suma no nula o juegos de suma no cero. Pero en general los otros juegos de la misma familia
 tienen la misma estructura: hay dos jugadores, cada uno se enfrenta a la decisi\'on de cooperar o traicionar al otro, y cada acci\'on produce una ganancia o
@@ -45,32 +63,32 @@ El objetivo de cada juegador es simplemente sobrevivir el mayor n\'umero de d\'{
 Cada ronda del juego representa un d\'{\i}a de la civilizaci\'on, cada d\'{\i}a surge un evento nuevo que puede ser de diferentes tipos, cada evento intenta
 simular de la forma m\'as parecida posible situaciones que podr\'{\i}an ser reales en una civilizaci\'on de este estilo.
 
-\paragraph*{Eventos cooperativos:}
+\subsubsection{Eventos cooperativos:}
 Estos eventos tienen asociado una cantidad positiva o negativa de recursos, ya que pueden ser eventos positivos o negativos. Estos tipos de eventos hacen alusi\'on a situaciones del estilo:
 \begin{itemize}
-    \item Ha aparecido una mina de carb\'on a 5km de distancia es necesario ir a minar el carb\'on.
-    \item El trigo ha madurado y es necesario cosecharlo.
-    \item Se necesita madera en la civilizaci\'on y se necesita ir a talar \'arboles.
-    \item Es necesario crear pozos para tener un f\'acil acceso al agua potable en vez de acarrear agua desde el r\'{\i}o.
-    \item Con el fin de conseguir carne se est\'an agrupando en el pueblo para ir de cacer\'{\i}a.
-    \item Las fuertes lluvias han tra\'{\i}do inundaciones al pueblo, es necesario la colaboraci\'on de todos para reparar los destrozos.
+      \item Ha aparecido una mina de carb\'on a 5km de distancia es necesario ir a minar el carb\'on.
+      \item El trigo ha madurado y es necesario cosecharlo.
+      \item Se necesita madera en la civilizaci\'on y se necesita ir a talar \'arboles.
+      \item Es necesario crear pozos para tener un f\'acil acceso al agua potable en vez de acarrear agua desde el r\'{\i}o.
+      \item Con el fin de conseguir carne se est\'an agrupando en el pueblo para ir de cacer\'{\i}a.
+      \item Las fuertes lluvias han tra\'{\i}do inundaciones al pueblo, es necesario la colaboraci\'on de todos para reparar los destrozos.
 \end{itemize}
 Aqu\'{\i} los pobladores se dividen en grupos aleatoriamente, y empieza el juego. Cada uno debe tomar una decisi\'on, que puede ser: \textbf{cooperar},
 \textbf{explotar} o \textbf{trabajar en solitario}. Luego esa decisi\'on se "enfrenta" con las decisiones de los otros integrantes de su grupo siguiendo la
 siguiente matriz de decisisones y ganancias.
 \vspace*{2mm}
 \begin{center}
-    \begin{tabular}{|l|c|c|c|}
-        \hline
-                 & Cooperar & Explotar & Solo  \\
-        \hline
-        Cooperar & (10,10)  & (0,15)   & (8,8) \\
-        \hline
-        Explotar & (15,0)   & (0,0)    & (3,8) \\
-        \hline
-        Solo     & (8,8)    & (8,3)    & (8,8) \\
-        \hline
-    \end{tabular}
+      \begin{tabular}{|l|c|c|c|}
+            \hline
+                     & Cooperar & Explotar & Solo  \\
+            \hline
+            Cooperar & (10,10)  & (0,15)   & (8,8) \\
+            \hline
+            Explotar & (15,0)   & (0,0)    & (3,8) \\
+            \hline
+            Solo     & (8,8)    & (8,3)    & (8,8) \\
+            \hline
+      \end{tabular}
 \end{center}
 Podemos pensarlo de la siguiente manera: Aparece una mina de carb\'on y van varios pobladores a minar. Una persona por si sola solo
 puede extraer 8 puntos de recursos, si coopera con otra persona entre los dos pueden ser m\'as eficientes al especializarce y logran
@@ -84,62 +102,124 @@ Luego de eso los recursos que ten\'{\i}a asignado ese evento se reparten en base
 Se hace evidente que el objetivo es obtener la mayor cantidad de puntos en los eventos positivos y perder la menor cantidad en los eventos
 negativos.
 
-\paragraph*{Eventos especiales: } estos son mas f\'aciles de comprender, son eventos que pueden afectar a uno o varios pobladores, rest\'andoles
+\subsubsection{Eventos especiales: } estos son mas f\'aciles de comprender, son eventos que pueden afectar a uno o varios pobladores, rest\'andoles
 o otorg\'andoles recursos de fñorma aleatoria. Se podr\'{\i}an comparar con situaciones del estilo:
 \begin{itemize}
-    \item La vaca del poblador (insertar nombre gen\'erico) tuvo un ternero, lo cual aumenta su cantidad de recursos.
-    \item Un \'arbol cay\'o sobre la casa de (insertar nombre gen\'erico) debido a un fuerte viento.
-    \item Este verano hubo una abuntante lluvia lo cual es bueno para los cultivos.
-    \item Se esparci\'o una enfermedad que afect\'o al ganado de todo el pueblo.
+      \item La vaca del poblador (insertar nombre gen\'erico) tuvo un ternero, lo cual aumenta su cantidad de recursos.
+      \item Un \'arbol cay\'o sobre la casa de (insertar nombre gen\'erico) debido a un fuerte viento.
+      \item Este verano hubo una abuntante lluvia lo cual es bueno para los cultivos.
+      \item Se esparci\'o una enfermedad que afect\'o al ganado de todo el pueblo.
 \end{itemize}
 
 \subsection{Otras mec\'anicas del juego}
 Hay una serie de mec\'acnicas opcionales en este juego, que pueden darle m\'as o menos ventaja a alguna estrategia en particular.
 A continuaci\'on ponemos algunas de ellas.
 \begin{itemize}
-    \item En principio las decisiones tomadas por cada poblador son privadas, es decir cada poblador solo conoce a lo largo del juego las decisiones
-          que tomaron los que estaban en su mismo grupo en cada ronda, desconociendo lo que pas\'o en los dem\'as grupos. Opcionalmente es posible hacer las
-          decisiones p\'ublicas, y que cada poblador sepa cada decisi\'on tomaron los dem\'as, simulando as\'i el chisme o la comunicaci\'on entre pobladores.
-          Veremos m\'as adelante que influencia tiene esto sobre el juego.
-    \item Otra mec\'anica adicional es simular la reputaci\'on de los aldeanos, en base a antiguos comportamientos, esto podr\'{\i}a ser informaci\'on
-          adicional para los pobladores, ya que tienen un dato cualitativo del comportamiento de otros.
-    \item Apoy\'andose en la reputaci\'on mencionada anteriormente es posible a\~nadir una especie de juicio comunitario o "polic\'ia", que se encarga de que existe una posibilidad
-          cada d\'{\i}a de que las personas con muy baja reputaci\'on se les prohiba participar en eventos cooperativos. Siendo esto una forma de castigo impuesto
-          por los pobladores o por una "polic\'{\i}a" hacia los que peor comportamiento tienen en el pueblo.
-    \item ¿Qui\'en en la vida real no ha malinterpretado las intenciones o acciones de otras personas debido a una falta de comunicaci\'on?. Pues esta es otra de las
-          mec\'anicas adicionales del juego, exites una posibilidad de la elecci\'on de un jugador sea malinterpretada por los dem\'as. Por ejemplo el jugador (insertar nombre gen\'erico)
-          quiso apoyar a la construcci\'on de la plaza del pueblo, pero debido a ciertas circunstancias los dem\'as pensaron que estaba holgazaneando y rob\'andose los
-          materiales dados por la iglesia para la construcci\'on. Consecuencia: su reputaci\'on baj\'o debido a eso y todos pensaron que \'el hab\'{\i}a robado.
+      \item En principio las decisiones tomadas por cada poblador son privadas, es decir cada poblador solo conoce a lo largo del juego las decisiones
+            que tomaron los que estaban en su mismo grupo en cada ronda, desconociendo lo que pas\'o en los dem\'as grupos. Opcionalmente es posible hacer las
+            decisiones p\'ublicas, y que cada poblador sepa cada decisi\'on tomaron los dem\'as, simulando as\'i el chisme o la comunicaci\'on entre pobladores.
+            Veremos m\'as adelante que influencia tiene esto sobre el juego.
+      \item Otra mec\'anica adicional es simular la reputaci\'on de los aldeanos, en base a antiguos comportamientos, esto podr\'{\i}a ser informaci\'on
+            adicional para los pobladores, ya que tienen un dato cualitativo del comportamiento de otros.
+      \item Apoy\'andose en la reputaci\'on mencionada anteriormente es posible a\~nadir una especie de juicio comunitario o "polic\'ia", que se encarga de que existe una posibilidad
+            cada d\'{\i}a de que las personas con muy baja reputaci\'on se les prohiba participar en eventos cooperativos. Siendo esto una forma de castigo impuesto
+            por los pobladores o por una "polic\'{\i}a" hacia los que peor comportamiento tienen en el pueblo.
+      \item ¿Qui\'en en la vida real no ha malinterpretado las intenciones o acciones de otras personas debido a una falta de comunicaci\'on?. Pues esta es otra de las
+            mec\'anicas adicionales del juego, exites una posibilidad de la elecci\'on de un jugador sea malinterpretada por los dem\'as. Por ejemplo el jugador (insertar nombre gen\'erico)
+            quiso apoyar a la construcci\'on de la plaza del pueblo, pero debido a ciertas circunstancias los dem\'as pensaron que estaba holgazaneando y rob\'andose los
+            materiales dados por la iglesia para la construcci\'on. Consecuencia: su reputaci\'on baj\'o debido a eso y todos pensaron que \'el hab\'{\i}a robado.
+      \item ¿Y qu\'e pasa con las nuevas generaciones?. Pues opcionalmente tambi\'en puede nacer nuevos pobladores, cada cierta cantidad de tiempo, solo los pobladores
+            con m\'as recursos pueden permitirse tener decendencia, educando a sus hijos con sus ideales.
 \end{itemize}
 \newpage
 
 \section{Estrategias}
+\subsection{Un poco de historia}
 En estos juegos de suma no cero la parte m\'as importante es la estrategia que se elige para jugar. Que reglas o comportamientos va a mostrar cada jugador en cada ronda.
 En el tradicional juego del dilema del prisionero y otros exite una serie de estrategias o jugadores b\'asicos, los cu\'ales mostramos a continuaci\'on.
 \begin{itemize}
-    \item \textbf{Always cooperate} es una estrategia b\'asica que simplemente siempre elige la opci\'on de cooperar.
-    \item \textbf{Always cheat} al igual que la anterior, solo que esta siempre elige explotar.
-    \item \textbf{Grudger} o rencoroso, siempre coopera hasta que lo enga\~nan, a partir de ah\'i siempre roba.
-    \item \textbf{Random} es la estrategia m\'as simple, no creo ni que tenga que explicarla.
-    \item \textbf{Tit for tat} es uno de los m\'as conocidos, aunque tambi\'en se conoce por los nombres de ojo por ojo, the golden rule. Simplemente empieza cooperando
-          y despu\'es solo copia la anterior jugada del oponente. Aunque es mucho mejor verlo de la siguiente forma, siempre coopera y cuando le roban, el devuelve el
-          golpe una sola vez, despu\'es sigue cooperando. Es una estrategia bastante eficiente a pesar de su sencillez.
-    \item \textbf{Tit for two tats} es literalmente el tit for tat solo que este coopera y solo roba cuando le robas dos veces seguidas, es decir: es m\'as tolerante.
+      \item \textbf{Always cooperate} es una estrategia b\'asica que simplemente siempre elige la opci\'on de cooperar.
+      \item \textbf{Always cheat} al igual que la anterior, solo que esta siempre elige explotar.
+      \item \textbf{Grudger} o rencoroso, siempre coopera hasta que lo enga\~nan, a partir de ah\'i siempre roba.
+      \item \textbf{Random} es la estrategia m\'as simple, no creo ni que tenga que explicarla.
+      \item \textbf{Tit for tat} es uno de los m\'as conocidos, aunque tambi\'en se conoce por los nombres de ojo por ojo, the golden rule. Simplemente empieza cooperando
+            y despu\'es solo copia la anterior jugada del oponente. Aunque es mucho mejor verlo de la siguiente forma, siempre coopera y cuando le roban, el devuelve el
+            golpe una sola vez, despu\'es sigue cooperando. Es una estrategia bastante eficiente a pesar de su sencillez.
 \end{itemize}
+
+\subsection{Estrategias propias}
 Por supuesto todas estas estrategias son del juego tradicional, aunque son f\'acilmente adaptables a nuestras reglas. Adem\'as de estos jugadores b\'asicos
 hemos a\~nadido nuestras propias estrategias de juego, algunas mas inteligentes que otras. Las cu\'ales exponemos a continuaci\'on.
 \begin{itemize}
-    \item \textbf{Exploit and explore} es una estrategia sencilla, que sigue estas dos reglas: de vez en cuando juega aleatoriamente, el resto del tiempo juega la jugada
-          que m\'as puntos le ha conseguido anteriormente.
-    \item \textbf{Prophet} intenta predecir el futuro de los pr\'oximos 5 d\'{\i}as y toma la jugada que maximize sus recursos.
-    \item \textbf{Detective} va tratando de deducir las estrategias de los pobladores a partir de sus jugadas conocidas, y juega lo que m\'as le conviene en base a predecir
-          que jugar\'an los dem\'as dadas sus estrategias.
-    \item \textbf{Judge} basa sus decisiones en la reputaci\'on de los pobladores de su grupo. No colaborar\'a con la gente que juzgue de manera negativa.
+      \item \textbf{Exploit and explore} es una estrategia sencilla, que sigue estas dos reglas: de vez en cuando juega aleatoriamente, el resto del tiempo juega la jugada
+            que m\'as puntos le ha conseguido anteriormente.
+      \item \textbf{Prophet} intenta predecir el futuro de los pr\'oximos 5 d\'{\i}as y toma la jugada que maximize sus recursos.
+      \item \textbf{Detective} va tratando de deducir las estrategias de los pobladores a partir de sus jugadas conocidas, y juega lo que m\'as le conviene en base a predecir
+            que jugar\'an los dem\'as dadas sus estrategias.
+      \item \textbf{Judge} basa sus decisiones en la reputaci\'on de los pobladores de su grupo. No colaborar\'a con la gente que juzgue de manera negativa.
 \end{itemize}
 \newpage
 
 \section{Modelando el juego}
+Para poder simular el juego nos estamos basando por supuesto en el uso de agentes inteligentes, que representan cada una de las estrategias planteadas anteriormente, y que
+cada decisi\'on que tomen afecta la informaci\'on del ambiente o entorno. Informaci\'on que en un futuro pueden consultar o no. En esta secci\'on vamos a abordar aspectos
+un poco m\'as te\'oricos del proyecto. ¿C\'omo est\'a definido y estructurado el ambiente o entorno de la simulaci\'on y que caracter\'{\i}sticas posee?. ¿C\'omo est\'an
+modelados los agentes y que interacci\'on tienen con el ambiente?. ¿C\'omo se  clasifican estos agentes?. Estas preguntas y algunas m\'as estaremos respondiendo en esta
+secci\'on.
+
+\subsection{Modelaci\'on del entorno}
+\subsubsection{Informaci\'on del entorno}
+A continuaci\'on se muestran la informaci\'on que se encuentra y se maneja en el entorno, no toda la informaci\'on aqui ese accesible para los aldeanos, algunas solo sirven
+para el funcionamiento de algunas mec\'anicas de la simulaci\'on:
+\begin{itemize}
+      \item Cantidad de recursos de cada poblador, ya que es una informaci\'on p\'ublica.
+      \item Matriz de confianza, que en la posici\'on [i,j] tiene un valor que representa que tan bien se llevan los pobladores i y j.
+      \item El historial de decisiones de los jugadores.
+      \item La reputaci\'on global de cada aldeano, que es un n\'umero entre 0 y 1.
+
+\end{itemize}
+
+Y estos son los par\'ametros de la simulaci\'on que se pueden modificar para obtener y explorar diferntes resultados:
+\begin{itemize}
+      \item P\'erdida de recursos diario: Cantidad de recursos que pierde cada poblador para sustentarse cada d\'{\i}a.
+      \item Tolerancia al robo: es un valor que representa cuan tolerante es la sociedad al robo, antes de aplicar un castigo.
+      \item Frecuencia de reproducci\'on: representa cada cuantos d\'{\i}as los pobladores dan luz a su descendencia.
+      \item Densidad de reproducci\'on: representa cu\'antos aldeanos nuevos nacen a la vez.
+      \item Ruido: Que tan probable es que las acciones de un aldeano se malinterpreten.
+\end{itemize}
+\subsubsection[short]{Caracterizaci\'on del entorno}
+\begin{itemize}
+      \item \textbf{No accesible:} En el entorno existe informaci\'on que no es accesible para los agentes, como la matriz de confianza, la reputaci\'on global y los par\'ametros
+            de la simulaci\'on. Por lo cual podemos decir que se puede considerar un entorno no accesible.
+      \item \textbf{Est\'atico:} El entorno solo cambia en base a las decisiones de los agentes, no existe factor externo que lo influencie.
+      \item \textbf{Discreto:} Los agentes tienen un conjunto limitado de acciones a tomar, y cada cambio en el entorno se realiza al final de una ronda, y el n\'umero de rondas es discreta.
+      \item \textbf{Multiagente:} Los cambios en el entorno est\'a dado por las decisiones e interacciones entre varios agentes. Los agentes pueden tener en cuenta las acciones de los
+            otros agentes a la hora de tomar una decisio\'on.
+      \item \textbf{No Determinista:} Los cambios en el entorno est\'an influenciados por ciertas variables aleatorias como el ruido y la tolerancia al robo.
+\end{itemize}
+
 
 \subsection{Modelaci\'on de los agentes}
+A continuaci\'on vamos a caracterizar los tipos de agentes de nuestra simulaci\'on:
+\begin{itemize}
+      \item Primero tenemos a los agentes simples como always cooperate, always cheat y random que son agentes que sus decisiones no dependen del entorno
+            ni de las acciones pasadas. Juegan de forma determinista, por lo que se clasificar\'{\i}an como \textbf{agentes puramente reactivos}.
+      \item Tenemos a los agentes como el tit for tat, y el judge que basan sus decisiones en eventos pasados y en la informaci\'on del entorno. Por lo cual podr\'ian
+            considerarse \textbf{agentes deductivos}. El grudger tambi\'en entrar\'{\i}a en esta categor\'{\i}a.
+      \item Dada la capacidad de exploit and explore de cambiar su comportamiento en funci\'on de que jugada ha sido la mejor para \'el puede considerarse un
+            \textbf{agente adaptivo}.
+\end{itemize}
+\newpage
+
+\section{Agentes Inteligentes}
+Como podemos observar en esta simulaci\'on tenemos varios agentes bastante inteligentes incluso para una civilizaci\'on medianamente avanzada. Vamos a explicar
+un poco sobre que razonmiento siguen y en que conocimientos se basan para lograr esto.
+
+\subsection{Prophet}
+El profeta ha obtenido su conocimiento de los libros, o de las setas que cultiva en su patio seg\'un dicen las malas lenguas. El profeta tiene una cuenta con la
+probable reputaci\'on de los dem\'as aldeanos y de su propia reputaci\'on. Con esa informaci\'on trata de predecir la estrategia que va a seguir cada uno en la actual
+ronda, y por cada una de sus opciones simula la siguiente ronda asumiendo una de sus opciones, repite este proceso 5 veces, y cuando ya recorri\'o todos esos posibles
+futuros toma la decisi\'on con m\'as recursos al final del camino.
+
 
 \end{document}
