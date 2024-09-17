@@ -53,6 +53,8 @@ class Simulator:
         thief_toleration: int,
         reproduction_rate: int,
         reproduction_density: int,
+        global_visible_desitions: bool,
+        noise: float,
     ) -> None:
         self.event_generator: EventGenerator = event_generator
         self.enviroment = Enviroment(agents, lost_per_day)
@@ -61,23 +63,27 @@ class Simulator:
         self.thief_toleration: int = thief_toleration
         self.reproduction_rate: int = reproduction_rate
         self.reproduction_density: int = reproduction_density
+        self.global_visible_desitions: bool = global_visible_desitions
+        self.noise: float = noise
 
-    def run(self, days: int) -> dict:
+    def run(self, days: int, verbose=False) -> dict:
         for _ in range(days):
 
             self.enviroment.next_day()
-            print("Day: ", self.enviroment.day)
+            if verbose:
+                print("Day: ", self.enviroment.day)
             new_event: Event = self.event_generator.GetNewEvent(
                 self.enviroment.agents_alive,
                 self.thief_toleration,
                 self.enviroment.global_reputation,
                 self.enviroment.trust_matrix,
             )
-            # print("Trust: ", self.enviroment.trust_matrix)
-            print("Event: ", new_event)
+            if verbose:
+                # print("Trust: ", self.enviroment.trust_matrix)
+                print("Event: ", new_event)
 
             if new_event.event_type == EventType.COOP:
-                self.decide(new_event)
+                self.decide(new_event, verbose)
                 resources = self.play_the_game(new_event)
 
             elif new_event.event_type == EventType.SPECIAL:
@@ -98,7 +104,12 @@ class Simulator:
                 for group in new_event.groups:
                     for agent in group:
                         visible_desitions: dict[int, Action] = (
-                            self.get_visible_desitions(new_event, agent, False, 0)
+                            self.get_visible_desitions(
+                                new_event,
+                                agent,
+                                self.global_visible_desitions,
+                                self.noise,
+                            )
                         )
                         self.enviroment.agents[agent].passive_action(
                             EnviromentInfo(
@@ -110,12 +121,15 @@ class Simulator:
                             ),
                             visible_desitions,
                         )
-
-            print(f"Public resources: {self.enviroment.public_resources}")
+            if verbose:
+                print(f"Public resources: {self.enviroment.public_resources}")
+            if not self.enviroment.agents_alive:
+                return self.enviroment.log
             if new_event.event_type == EventType.COOP:
                 self.stats.plot_agent_resources(new_event, self.enviroment)
 
-        print(dict_to_string(self.enviroment.log, self.enviroment.agents))
+        if verbose:
+            print(dict_to_string(self.enviroment.log, self.enviroment.agents))
         with open("log.txt", "w", encoding="ISO-8859-1") as f:
             f.write(dict_to_string(self.enviroment.log, self.enviroment.agents))
 
@@ -150,6 +164,15 @@ class Simulator:
             ]
 
             new_agents: list[Agent] = self.enviroment.agents[:]
+
+            if self.reproduction_density > len(top_agents):
+                new_agents.extend(
+                    [
+                        self.enviroment.agents[top_agents[0]]
+                        for i in range(self.reproduction_density - len(top_agents) + 1)
+                    ]
+                )
+
             new_agents.extend([self.enviroment.agents[agent] for agent in top_agents])
 
             self.enviroment: Enviroment = self.enviroment.copy(
@@ -167,8 +190,9 @@ class Simulator:
                 general_resources[agent_id] = resources[i]
         return general_resources
 
-    def decide(self, new_event: Event) -> None:
-        print("Desitions: {")
+    def decide(self, new_event: Event, verbose) -> None:
+        if verbose:
+            print("Desitions: {")
         self.enviroment.log[new_event] = {}
         for group in new_event.groups:
             for agent in group:
@@ -181,10 +205,16 @@ class Simulator:
                 )
                 self.enviroment.log[new_event][agent] = action
                 self.set_reputation(agent, action)
-
-                print(
-                    "\t", agent, ": ", action, "(", self.enviroment.agents[agent], ")"
-                )
+                if verbose:
+                    print(
+                        "\t",
+                        agent,
+                        ": ",
+                        action,
+                        "(",
+                        self.enviroment.agents[agent],
+                        ")",
+                    )
             for agent in group:
                 for other in group:
                     if agent != other:
@@ -194,8 +224,8 @@ class Simulator:
                             self.enviroment.trust_matrix[agent][other] += 0.05
                         elif self.enviroment.log[new_event][other] == Action.COOP:
                             self.enviroment.trust_matrix[agent][other] += 0.1
-
-        print("}")
+        if verbose:
+            print("}")
 
     def set_reputation(self, agent: int, action: Action):
         if agent in self.enviroment.global_reputation:
@@ -271,10 +301,12 @@ Simulator(
         good_time_probabilities=0.7,
         coop_event_probability=0.8,
     ),
-    lost_per_day=60,
+    lost_per_day=100,
     thief_toleration=1,
     reproduction_rate=20,
     reproduction_density=10,
-).run(365)
-
+    global_visible_desitions=False,
+    noise=0.1,
+).run(365, verbose=False)
+print("Escribiendo historia...\n")
 print(make_history())

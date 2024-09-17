@@ -26,7 +26,7 @@ def prisioners_game(desition1: Action, desition2: Action) -> int:
     if desition1 == Action.EXPLOIT and desition2 == Action.EXPLOIT:
         return 0
     if desition1 == Action.EXPLOIT and desition2 == Action.INACT:
-        return 3
+        return 5
     return 8
 
 
@@ -53,7 +53,7 @@ def group_prisioners_game(desitions: list[Action], resources: int) -> list[int]:
     list_result: list[int] = [0] * len(desitions)
     for d1 in range(len(desitions)):
         for d2 in range(len(desitions)):
-            if d1 < d2:
+            if d1 != d2:
                 if resources > 0:
                     list_result[d1] += prisioners_game(desitions[d1], desitions[d2])
                 else:

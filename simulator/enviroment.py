@@ -56,7 +56,7 @@ class Enviroment:
         new_env.agents_alive = self.agents_alive[:] + [
             index
             for index in range(
-                len(self.agents) + 1, len(self.agents) + 1 + reproduction_density
+                len(self.agents), len(self.agents) + 1 + reproduction_density
             )
         ]
 

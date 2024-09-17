@@ -300,6 +300,7 @@ class SearchAgent(Agent):
         coop_reosurce: int = self.best_play(
             my_coop_resources, deep - 1, copy_reputation, enviroment
         )[0]
+        desitions.pop()
 
         # INACT
         desitions.append(Action.INACT)
@@ -309,7 +310,7 @@ class SearchAgent(Agent):
         inact_reosurce: int = self.best_play(
             my_inact_resources, deep - 1, copy_reputation, enviroment
         )[0]
-
+        desitions.pop()
         # EXPLOIT
         desitions.append(Action.EXPLOIT)
         my_exploit_resources = (
@@ -318,6 +319,7 @@ class SearchAgent(Agent):
         exploit_reosurce: int = self.best_play(
             my_exploit_resources, deep - 1, copy_reputation, enviroment
         )[0]
+        desitions.pop()
 
         if coop_reosurce > inact_reosurce and coop_reosurce > exploit_reosurce:
             return coop_reosurce, Action.COOP
@@ -379,7 +381,6 @@ class SearchAgent(Agent):
 
     def select_group(self, agents_alive: list[int]) -> list[int]:
         agents: list[int] = agents_alive.copy()
-        agents.remove(self.agent_id)
         random.shuffle(agents)
         rand: int = poisson(lam=5)
         start: int = random.randint(0, len(agents))
