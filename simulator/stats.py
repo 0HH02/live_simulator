@@ -136,9 +136,10 @@ class Stats:
         self.show_theft_stats()
 
         # Dibujar las figuras
-        self.fig1.canvas.draw()
+        # if self.environment.day > 364:
         self.fig2.canvas.draw()
         self.fig3.canvas.draw()
+        self.fig1.canvas.draw()
 
         # Pausar brevemente para actualizar
         plt.pause(0.01)

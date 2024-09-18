@@ -70,8 +70,8 @@ class Simulator:
         for _ in range(days):
 
             self.enviroment.next_day()
-            if verbose:
-                print("Day: ", self.enviroment.day)
+            # if verbose:
+            print("Day: ", self.enviroment.day)
             new_event: Event = self.event_generator.GetNewEvent(
                 self.enviroment.agents_alive,
                 self.thief_toleration,
@@ -298,15 +298,16 @@ Simulator(
     population_random_generator(50),
     ProbabilisticEventGenerator(
         good_coop_resource_probability=0.8,
-        good_time_probabilities=0.7,
-        coop_event_probability=0.8,
+        good_time_probabilities=0.8,
+        coop_event_probability=0.9,
     ),
     lost_per_day=100,
-    thief_toleration=1,
+    thief_toleration=0,
     reproduction_rate=20,
     reproduction_density=10,
-    global_visible_desitions=False,
-    noise=0.1,
-).run(365, verbose=False)
+    global_visible_desitions=True,
+    noise=0.5,
+).run(730, verbose=True)
 print("Escribiendo historia...\n")
-print(make_history())
+# print(make_history())
+input()
