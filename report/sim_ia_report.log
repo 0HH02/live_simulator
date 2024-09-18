@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (MiKTeX 24.4) (preloaded format=pdflatex 2024.9.11)  18 SEP 2024 11:51
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (MiKTeX 24.4) (preloaded format=pdflatex 2024.9.11)  18 SEP 2024 15:03
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -686,17 +686,17 @@ File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 <./images/population_1.jpg, id=308, 666.99188pt x 447.92343pt>
 File: ./images/population_1.jpg Graphic file (type jpg)
 <use ./images/population_1.jpg>
-Package pdftex.def Info: ./images/population_1.jpg  used on input line 269.
+Package pdftex.def Info: ./images/population_1.jpg  used on input line 270.
 (pdftex.def)             Requested size: 110.40253pt x 74.13655pt.
 <./images/agents_1.jpg, id=309, 659.46375pt x 409.53pt>
 File: ./images/agents_1.jpg Graphic file (type jpg)
 <use ./images/agents_1.jpg>
-Package pdftex.def Info: ./images/agents_1.jpg  used on input line 273.
+Package pdftex.def Info: ./images/agents_1.jpg  used on input line 274.
 (pdftex.def)             Requested size: 110.40253pt x 68.55685pt.
 <./images/resources_1.jpg, id=310, 669.2503pt x 453.19313pt>
 File: ./images/resources_1.jpg Graphic file (type jpg)
 <use ./images/resources_1.jpg>
-Package pdftex.def Info: ./images/resources_1.jpg  used on input line 277.
+Package pdftex.def Info: ./images/resources_1.jpg  used on input line 278.
 (pdftex.def)             Requested size: 110.40253pt x 74.7598pt.
 
 
@@ -704,12 +704,12 @@ Package pdftex.def Info: ./images/resources_1.jpg  used on input line 277.
 <./images/population_2.jpg, id=315, 664.73344pt x 431.36156pt>
 File: ./images/population_2.jpg Graphic file (type jpg)
 <use ./images/population_2.jpg>
-Package pdftex.def Info: ./images/population_2.jpg  used on input line 304.
+Package pdftex.def Info: ./images/population_2.jpg  used on input line 305.
 (pdftex.def)             Requested size: 144.89937pt x 94.02441pt.
 <./images/population_3.jpg, id=316, 665.48625pt x 434.37282pt>
 File: ./images/population_3.jpg Graphic file (type jpg)
 <use ./images/population_3.jpg>
-Package pdftex.def Info: ./images/population_3.jpg  used on input line 309.
+Package pdftex.def Info: ./images/population_3.jpg  used on input line 310.
 (pdftex.def)             Requested size: 144.89937pt x 94.57474pt.
 
 
@@ -719,12 +719,12 @@ Package pdftex.def Info: ./images/population_3.jpg  used on input line 309.
 <./images/resources_2.jpg, id=328, 655.69969pt x 431.36156pt>
 File: ./images/resources_2.jpg Graphic file (type jpg)
 <use ./images/resources_2.jpg>
-Package pdftex.def Info: ./images/resources_2.jpg  used on input line 355.
+Package pdftex.def Info: ./images/resources_2.jpg  used on input line 356.
 (pdftex.def)             Requested size: 144.89937pt x 95.32108pt.
 <./images/alive_1.jpg, id=329, 663.98062pt x 422.32782pt>
 File: ./images/alive_1.jpg Graphic file (type jpg)
 <use ./images/alive_1.jpg>
-Package pdftex.def Info: ./images/alive_1.jpg  used on input line 359.
+Package pdftex.def Info: ./images/alive_1.jpg  used on input line 360.
 (pdftex.def)             Requested size: 144.89937pt x 92.16487pt.
 
 
@@ -732,12 +732,12 @@ Package pdftex.def Info: ./images/alive_1.jpg  used on input line 359.
 <./images/agents_2.jpg, id=334, 667.74469pt x 406.51875pt>
 File: ./images/agents_2.jpg Graphic file (type jpg)
 <use ./images/agents_2.jpg>
-Package pdftex.def Info: ./images/agents_2.jpg  used on input line 387.
+Package pdftex.def Info: ./images/agents_2.jpg  used on input line 388.
 (pdftex.def)             Requested size: 144.89937pt x 88.2124pt.
 <./images/alive_2.jpg, id=335, 658.71094pt x 436.63126pt>
 File: ./images/alive_2.jpg Graphic file (type jpg)
 <use ./images/alive_2.jpg>
-Package pdftex.def Info: ./images/alive_2.jpg  used on input line 391.
+Package pdftex.def Info: ./images/alive_2.jpg  used on input line 392.
 (pdftex.def)             Requested size: 144.89937pt x 96.04584pt.
 
 
@@ -766,7 +766,7 @@ Here is how much of TeX's memory you used:
  1141 hyphenation exceptions out of 8191
  116i,8n,121p,746b,1050s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/admin/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx10.pfb><C:/Users/admin/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pfb><C:/Users/admin/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmcsc10.pfb><C:/Users/admin/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr10.pfb><C:/Users/admin/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr12.pfb><C:/Users/admin/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr17.pfb>
-Output written on sim_ia_report.pdf (20 pages, 984049 bytes).
+Output written on sim_ia_report.pdf (20 pages, 986038 bytes).
 PDF statistics:
  404 PDF objects out of 1000 (max. 8388607)
  68 named destinations out of 1000 (max. 500000)
