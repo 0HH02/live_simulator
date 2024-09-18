@@ -1,9 +1,15 @@
 \documentclass{article}
-
 \usepackage{hyperref}
+\usepackage[most]{tcolorbox}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern} 
+\usepackage{lipsum}
+\usepackage{graphicx}
 
 \renewcommand{\contentsname}{Tabla de Contenidos}
 
+
+\graphicspath{ {./images/} }
 
 
 \title{Simulando una sociedad a partir del dilema del prisionero}
@@ -187,7 +193,7 @@ Y estos son los par\'ametros de la simulaci\'on que se pueden modificar para obt
       \item Densidad de reproducci\'on: representa cu\'antos aldeanos nuevos nacen a la vez.
       \item Ruido: Que tan probable es que las acciones de un aldeano se malinterpreten.
 \end{itemize}
-\subsubsection[short]{Caracterizaci\'on del entorno}
+\subsubsection{Caracterizaci\'on del entorno}
 \begin{itemize}
       \item \textbf{No accesible:} En el entorno existe informaci\'on que no es accesible para los agentes, como la matriz de confianza, la reputaci\'on global y los par\'ametros
             de la simulaci\'on. Por lo cual podemos decir que se puede considerar un entorno no accesible.
@@ -213,13 +219,241 @@ A continuaci\'on vamos a caracterizar los tipos de agentes de nuestra simulaci\'
 
 \section{Agentes Inteligentes}
 Como podemos observar en esta simulaci\'on tenemos varios agentes bastante inteligentes incluso para una civilizaci\'on medianamente avanzada. Vamos a explicar
-un poco sobre que razonmiento siguen y en que conocimientos se basan para lograr esto.
+un poco sobre que razonmiento siguen y en que conocimientos se basan para lograr esto desde un punto de vista cerca de la implementaci\'on.
 
 \subsection{Prophet}
-El profeta ha obtenido su conocimiento de los libros, o de las setas que cultiva en su patio seg\'un dicen las malas lenguas. El profeta tiene una cuenta con la
+El profeta ha obtenido su conocimiento de los libros, o de las setas que cultiva en su patio seg\'un dicen las malas lenguas. El profeta guarda en memoria la
 probable reputaci\'on de los dem\'as aldeanos y de su propia reputaci\'on. Con esa informaci\'on trata de predecir la estrategia que va a seguir cada uno en la actual
 ronda, y por cada una de sus opciones simula la siguiente ronda asumiendo una de sus opciones, repite este proceso 5 veces, y cuando ya recorri\'o todos esos posibles
-futuros toma la decisi\'on con m\'as recursos al final del camino.
+futuros toma la decisi\'on que mas recursos le proporcion\'o al final del 5 d\'{\i}a. Se podr\'{\i}a decir que busca la mejor soluci\'on en todas las bifurcaciones posibles del \'arbol de
+decisi\'on. Por supuesto tengamos en cuenta que no es el camino \'optimo, ya que podr\'{\i}a existir otro que le diera menos recursos al final de los 5 d\'{\i}as, pero
+m\'as recursos en la duraci\'on total de la simulaci\'on. Pero el profeta solo tiene la posibilidad de recorrer el \'arbol de decisiones hasta profundidad 5, y la estrategia
+mejor en este caso es buscar la que m\'as recursos tenga al final del 5 d\'{\i}a, ya que podemos asumir que el estado donde tiene mayor cantidad de recursos al final de
+5 d\'{\i}as es el m\'as "cercano" al estado con m\'as recursos al final de la simulaci\'on.
 
+\subsection{Judge}
+El juez es una poblador con muy buena memoria y capacidad de an\'alisis. El juez trata de predecir que jug\'o cada poblador en cada ronda, no solo los que estaban en su grupo,
+de los cuales tiene informaci\'on sobre su jugada, sino tambi\'en trata de predecir la de los dem\'as a partir de la reputaci\'on. Y va guardando todo eso en su base de conocimiento
+manteniendo una idea general de la reputaci\'on de cada uno. Esto le ayuda a decidir que acci\'on tomar en cada ronda,
+\newpage
+
+
+\section{Resultados obtenidos}
+A partir de aqu\'{\i} ya lo que queda es empezar a simular varias aldeas con par\'ametros diferentes, con cantidades de agentes distintos e introducir o no mec\'anicas opcionales.
+En cada simulación tendremos en cuenta tanto las configuraciones iniciales como los resultados al final de la simulación, donde se pueden ver reflejados no solo la cantidad de aldeanos
+vivos, sino tambi\'en la cantidad de recursos totales de la aldea, que por ciento representaba cada tipo de aldeano de la poblaci\'on final, y que tanta riqueza ten\'{\i}n con respecto
+a los dem\'as.
+\subsection{Configuraci\'on b\'asica o por defecto}
+
+\subsubsection{Configuraci\'on inicial}
+\begin{itemize}
+      \item Cantidad de agentes iniciales: 50 (distribuidos aleatoriamente)
+      \item P\'erdida de recursos por d\'{\i}a: 100
+      \item Cantidad de recursos iniciales: Un n\'umero random entre 300 y 600.
+      \item Tolerancia al robo: 1.
+      \item Frecuencia de reproducci\'on: 20 d\'{\i}as.
+      \item Densidad de reproducci\'on: 10
+      \item Ruido: 0.1
+\end{itemize}
+\subsubsection{Resultados}
+Bajo estas condiciones a la poblaci\'on le fue bastante bien. Los pobladores que sobrevivieron hasta el final de la simulación fueron en su mayor\'{\i}a resentidos, y el judge representando
+casi el 70\% de la poblaci\'on. Aunque curiosamente son los tipos de pobladores con menos recursos en promedio, ya que son agentes que tienden a trabajar solos m\'as a menudo. Y trabajar solo
+te garantiza una cantidad fija de recursos, pero siempre es menos eficiente que cooperar. Se podr\'{\i}a decir que bajo las condiciones por defecto el ganador es Tit for Tat acumulando la mayor
+cantidad de recursos en promedio. Y la poblaci\'on alcanz\'o una media de recursos para el final del a\~no de m\'as de 5000.
+
+\subsubsection{Gr\'aficas}
+\begin{figure}[h]
+      \centering
+      \begin{minipage}{0.32\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{population_1.jpg}
+      \end{minipage}\hfill
+      \begin{minipage}{0.32\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{agents_1.jpg}
+      \end{minipage}\hfill
+      \begin{minipage}{0.32\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{resources_1.jpg}
+      \end{minipage}
+\end{figure}
+
+
+\subsection{Menor tolerancia al robo}
+\subsubsection{Configuraci\'on inicial}
+\begin{itemize}
+      \item Cantidad de agentes iniciales: 50 (distribuidos aleatoriamente)
+      \item P\'erdida de recursos por d\'{\i}a: 100
+      \item Cantidad de recursos iniciales: Un n\'umero random entre 300 y 600.
+      \item Tolerancia al robo: 0.5 - 0.
+      \item Frecuencia de reproducci\'on: 20 d\'{\i}as.
+      \item Densidad de reproducci\'on: 10
+      \item Ruido: 0.1
+\end{itemize}
+\subsubsection{Resultados}
+Con una menor toleracia al robo los Always cooperate no demoraron en desaparecer y a medida que se acerca a 0 los profetas también la pasan mal pudiendo llegara desaparecer
+en algunas ocasiones. A medida que la tolerancia al robo disminuye el judge domina en porcentaje poblacional con casi la mitad, aunque sigue siendo de los que mas bajos recursos
+tienen en promedio, el tit for tat sigue ganando a nivel de recursos, pero a medida que la tolerancia se acerca a 0, casi nadie tiene permitido robar y los pobladores que dominan
+son los que tienden a cooperar mas como el tit for tat o el always cooperate a nivel poblacional, pero por supuesto a nivel de recursos no distan muchos de otros. Aunque ahora que todos
+se ven obligados a cooperar por la autoridad ganan en promedio una mayor cantidad de recursos, sobre los 8500 en promedio.
+\subsubsection{Gr\'aficas}
+\begin{figure}[h]
+      \centering
+      \begin{minipage}{0.42\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{population_2.jpg}
+            \caption{Tolerancia al robo = 0.5}
+      \end{minipage}\hfill
+      \begin{minipage}{0.42\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{population_3.jpg}
+            \caption{Tolerancia al robo cercana a 0}
+      \end{minipage}\hfill
+\end{figure}
+
+
+\subsection{Mayor Ruido}
+\subsubsection{Configuraci\'on inicial}
+\begin{itemize}
+      \item Cantidad de agentes iniciales: 50 (distribuidos aleatoriamente)
+      \item P\'erdida de recursos por d\'{\i}a: 100
+      \item Cantidad de recursos iniciales: Un n\'umero random entre 300 y 600.
+      \item Tolerancia al robo: 1.
+      \item Frecuencia de reproducci\'on: 20 d\'{\i}as.
+      \item Densidad de reproducci\'on: 10
+      \item Ruido: 0.3 - 0.5
+\end{itemize}
+
+\subsubsection{Resultados}
+A medida que aumenta la falta de comunicaci\'on y entendimiento en la sociedad, se hace m\'as dif\'{\i}cil no solo predecir para los agentes que posible acci\'on van a tomar
+los dem\'as, sino que se les dificulta que los dem\'as entiendan sus acciones. Por lo tanto el avance de la sociedad es m\'as lenta, les cuesta el doble de tiempo reunir la misma
+cantidad de recursos que con el ruido = 0.1. Y a medida que el ruido se acerca a 0.5 se hace cada vez m\'as probable que la sociedad se destruya a s\'{\i} misma y mueran todos los
+pobladores, en general pueden durar hasta solo 60 d\'ias en el peor de los casos. Lo c\'ual evidencia que en esta simulación y en la vida real, entenderse es importante.
+
+\subsection{Modificando la poblaci\'on}
+\subsubsection{Configuraci\'on inicial}
+\begin{itemize}
+      \item Cantidad de agentes iniciales: 50 (quitando al judge y al resentido)
+      \item P\'erdida de recursos por d\'{\i}a: 100
+      \item Cantidad de recursos iniciales: Un n\'umero random entre 300 y 600.
+      \item Tolerancia al robo: 1.
+      \item Frecuencia de reproducci\'on: 20 d\'{\i}as.
+      \item Densidad de reproducci\'on: 10
+      \item Ruido: 0.1
+\end{itemize}
+
+\subsubsection{Resultados}
+En esta configuraci\'on al haber m\'as aldeanos que tienen como opci\'on robar se empiezan a traicionar unos a otros y explotando a los que cooperan. Desencadenando una disminuci\'on de la
+poblaci\'on en los primeros 50 d\'{\i}as, despu\'es cuando se matan unos a otros, los pocos sobrevivientes cooperan entre si y gracias la descendencia las estrategias buenas repoblan la aldea.
+Por supuesto, la ganancia de la aldea en cuesti\'on de recursos es muy pobre llegando apenas a los 2500.
+
+\subsubsection{Gr\'aficas}
+\begin{figure}[h]
+      \centering
+      \begin{minipage}{0.42\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{resources_2.jpg}
+      \end{minipage}\hfill
+      \begin{minipage}{0.42\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{alive_1.jpg}
+      \end{minipage}\hfill
+\end{figure}
+
+
+\subsection{Modificando la poblaci\'on 2.0}
+\subsubsection{Configuraci\'on inicial}
+\begin{itemize}
+      \item Cantidad de agentes iniciales: 50 (entre always cheat y judge)
+      \item P\'erdida de recursos por d\'{\i}a: 100
+      \item Cantidad de recursos iniciales: Un n\'umero random entre 300 y 600.
+      \item Tolerancia al robo: 1.
+      \item Frecuencia de reproducci\'on: 20 d\'{\i}as.
+      \item Densidad de reproducci\'on: 10
+      \item Ruido: 0.1
+\end{itemize}
+
+\subsubsection{Resultados}
+Despu\'es de varios d\'{\i}as los always cheat perdieron la cofianza de los judges y ahora los judges trabajan por su cuenta, mientras que los ladrones solo les queda la opci\'on de matarse
+entre ellos, disminuyendo mucho su poblaci\'on. Cuando ya quedan pocos ladrones los judges se dan cuenta que aunque caigan en un grupo con los ladrones les da m\'as ganancia cooperar que ir
+por su cuenta, y asi los always cheat pueden respirar y vivir un poco. Esta simulación termina con una coexistencia en la que los judges toleran a los ladrones por que son pocos y les es m\'as
+beneficioso colaborar aunque hayan algunos que roben, y los ladrones se sustentan en bajos n\'umeros robando. Aunque se nota que la media de recursos alcanzada por ambas partes es muy diferente.
+
+\subsubsection{Gr\'aficas}
+\begin{figure}[h]
+      \centering
+      \begin{minipage}{0.42\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{agents_2.jpg}
+      \end{minipage}\hfill
+      \begin{minipage}{0.42\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{alive_2.jpg}
+      \end{minipage}\hfill
+\end{figure}
+
+\newpage
+
+\section{El Edena Ruh}
+El edena ruh es un artista itinerante que pasa por el pueblo todos los años, se entera de lo que ha pasado en el pueblo y luego va a contar esas historias por el mundo.
+Sin otro medio de comunicaci\'on en la aldea, la \'unica forma en la que viaja la informaci\'on es a trav\'es de las historias. Y a veces las historias viajan m\'as rapido
+que las personas. Por supuesto, si el Edena adorna un poco las historias de la aldea para llamar la atenci\'on de los oyentes a nadie le molestar\'{\i}a ni un poco.
+
+\subsection{El prompt}
+Entrando ahora un poco en detalles t\'ecnicos y de implementaci\'on, el Edena Ruh no es m\'as que el LLM de Google, Gemini Advanced. La simulación genera unos logs con toda la
+informaci\'on de cada ronda. Al terminar la simulación esos logs se le mandana Gemini con la siguiente estructura de prompt:
+\begin{itemize}
+      \item Se le explica que tenemos como objetivo simular una sociedad y se le explican los detalles de la simulación, como funciona y las reglas que tiene.
+      \item Se le da una lista con los nombres y las estrategias de los jugadores.
+      \item Se le dan los logs de la simulación y se le dice que debe inventar una historia teniendo en cuenta el contexto anterior, la historia debe tener política, romance,
+            aventura y personajes relevantes.
+      \item Se le pide que sea fiel a la informaci\'on que esta en el log, que sea creativa y que escriba la historia en espa\~nol.
+\end{itemize}
+
+\subsection{La historia}
+\vspace*{5mm}
+\begin{tcolorbox}[enhanced, breakable,skin first=enhanced, skin middle=enhanced, skin last=enhanced]
+      El Nacimiento de Neotopia: Una Saga de Supervivencia y Estrategia
+      \textbf{Día 1: El Comienzo Incierto}\\
+      En el año 2142, tras el colapso de la civilización, un grupo de 100 supervivientes se une para formar Neotopia, un refugio en medio de la desolación. La vida es un
+      juego de azar, donde los recursos son escasos y la confianza, un lujo. Cada día trae consigo un evento, una oportunidad para prosperar o caer en la miseria. La
+      supervivencia depende de las decisiones que tomen, ya sea cooperar, explotar o mantenerse al margen en los eventos cooperativos. Entre los habitantes se destacan
+      Anya (Agente Pusilánime \#1), una joven idealista que cree en la bondad innata de las personas, y Kael (Agente ABR \#24), un estratega pragmático que analiza cada
+      situación con frialdad. El destino los une en el primer evento cooperativo, donde sus elecciones divergen: Anya coopera, mientras Kael se mantiene al margen.
+      \\\textbf{Día 5: El Amor en Tiempos Difíciles}\\
+      La vida en Neotopia es dura, pero el amor encuentra su camino. Anya y Kael, a pesar de sus diferencias, se sienten atraídos el uno por el otro. Su relación florece
+      en medio de la incertidumbre, un rayo de luz en la oscuridad.
+      \\\textbf{Día 20: La Traición de Kael}\\
+      La desconfianza corroe a Kael. Durante un evento cooperativo, sucumbe a la tentación y explota a su grupo. Anya, devastada por la traición de su amado, se aleja de
+      él. La comunidad se divide entre aquellos que apoyan a Anya y los que justifican las acciones de Kael.
+      \\\textbf{Día 30: La Gran Prueba}\\
+      Una tormenta de fuego azota Neotopia, poniendo a prueba la resiliencia de sus habitantes. Los recursos se vuelven negativos, lo que significa que todos perderán algo,
+      pero la cooperación es crucial para minimizar las pérdidas. Kael, atormentado por la culpa, se redime liderando los esfuerzos de reconstrucción. Su valentía y sacrificio
+      le ganan el respeto de la comunidad, incluso el de Anya.
+      \\\textbf{Día 50: Un Nuevo Comienzo}\\
+      Neotopia se levanta de las cenizas, más fuerte y unida. Anya y Kael, reconciliados, se convierten en líderes respetados. La comunidad aprende a equilibrar la cooperación
+      y la estrategia, representada por la creciente popularidad del Agente Search, que simula futuros movimientos para tomar la mejor decisión.
+      \\\textbf{El Auge de la Política}\\
+      La necesidad de organización lleva a la formación de facciones políticas. Anya lidera a los idealistas, abogando por la cooperación y la compasión. Kael encabeza a los
+      pragmáticos, promoviendo la estrategia y el análisis. La tensión entre ambos bandos aumenta, creando un drama político apasionante.
+      \\\textbf{Día 100: La Tragedia Golpea}\\
+      Un evento especial trae consigo una pérdida masiva de recursos. La comunidad se tambalea al borde del colapso. Algunos, como el Agente Ladrón \#92, aprovechan el caos
+      para robar, mientras que otros, como Anya, se mantienen firmes en su compromiso con la cooperación.
+      \\\textbf{El Resurgimiento de Neotopia}\\
+      La comunidad se recupera de la tragedia, pero las cicatrices permanecen. La desconfianza hacia los agentes aleatorios y ladrones crece, y algunos, como el Agente \#30, son excluidos de los eventos cooperativos. La historia de Neotopia es una montaña rusa de emociones, donde la política, el romance y la aventura se entrelazan en una lucha épica por la supervivencia. Los personajes principales, Anya y Kael, representan dos enfoques diferentes pero igualmente válidos para enfrentar la adversidad. Su relación, puesta a prueba por la traición y la redención, es un recordatorio de que incluso en los momentos más oscuros, el amor y la esperanza pueden prevalecer.
+
+      \textbf{Personajes Icónicos:}
+      \begin{itemize}
+            \item Anya (Agente Pusilánime \#1): La voz de la compasión y la esperanza, líder de los idealistas.
+            \item Kael (Agente ABR \#24): El estratega frío y calculador, líder de los pragmáticos.
+            \item Agente Ladrón \#92: El oportunista que se aprovecha del caos, generando desconfianza y conflicto.
+            \item Agente Search: El visionario que utiliza la tecnología para predecir el futuro y tomar decisiones estratégicas.
+            \item Agente \#30: El marginado, excluido de los eventos cooperativos debido a su baja reputación, un recordatorio de las duras consecuencias de la traición.
+      \end{itemize}
+      La simulación, con sus altibajos, refleja la complejidad de la sociedad humana. A través de los eventos especiales y cooperativos, vemos cómo las decisiones individuales pueden tener un impacto profundo en el destino de la comunidad. La historia de Neotopia nos recuerda que la supervivencia no se trata solo de fuerza o inteligencia, sino también de compasión, estrategia y la capacidad de adaptarse a un mundo en constante cambio.
+
+\end{tcolorbox}
+\newpage
+\section{Conclusiones}
 
 \end{document}
