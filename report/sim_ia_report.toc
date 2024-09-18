@@ -1,17 +1,42 @@
-\contentsline {section}{\numberline {1}Introduci\'on}{3}{section.1}%
-\contentsline {section}{\numberline {2}Reglas del juego}{4}{section.2}%
-\contentsline {subsection}{\numberline {2.1}Objetivo}{4}{subsection.2.1}%
-\contentsline {subsection}{\numberline {2.2}Ronda}{4}{subsection.2.2}%
-\contentsline {subsubsection}{\numberline {2.2.1}Eventos cooperativos:}{4}{subsubsection.2.2.1}%
-\contentsline {subsubsection}{\numberline {2.2.2}Eventos especiales: }{5}{subsubsection.2.2.2}%
-\contentsline {subsection}{\numberline {2.3}Otras mec\'anicas del juego}{5}{subsection.2.3}%
-\contentsline {section}{\numberline {3}Estrategias}{7}{section.3}%
-\contentsline {subsection}{\numberline {3.1}Un poco de historia}{7}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}Estrategias propias}{7}{subsection.3.2}%
-\contentsline {section}{\numberline {4}Modelando el juego}{8}{section.4}%
-\contentsline {subsection}{\numberline {4.1}Modelaci\'on del entorno}{8}{subsection.4.1}%
-\contentsline {subsubsection}{\numberline {4.1.1}Informaci\'on del entorno}{8}{subsubsection.4.1.1}%
-\contentsline {subsubsection}{\numberline {4.1.2}short}{9}{subsubsection.4.1.2}%
-\contentsline {subsection}{\numberline {4.2}Modelaci\'on de los agentes}{9}{subsection.4.2}%
-\contentsline {section}{\numberline {5}Agentes Inteligentes}{10}{section.5}%
-\contentsline {subsection}{\numberline {5.1}Prophet}{10}{subsection.5.1}%
+\contentsline {section}{\numberline {1}Introduci\'on}{4}{section.1}%
+\contentsline {section}{\numberline {2}Reglas del juego}{5}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Objetivo}{5}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Ronda}{5}{subsection.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.1}Eventos cooperativos:}{5}{subsubsection.2.2.1}%
+\contentsline {subsubsection}{\numberline {2.2.2}Eventos especiales: }{6}{subsubsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.3}Otras mec\'anicas del juego}{6}{subsection.2.3}%
+\contentsline {section}{\numberline {3}Estrategias}{8}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Un poco de historia}{8}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Estrategias propias}{8}{subsection.3.2}%
+\contentsline {section}{\numberline {4}Modelando el juego}{9}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Modelaci\'on del entorno}{9}{subsection.4.1}%
+\contentsline {subsubsection}{\numberline {4.1.1}Informaci\'on del entorno}{9}{subsubsection.4.1.1}%
+\contentsline {subsubsection}{\numberline {4.1.2}Caracterizaci\'on del entorno}{10}{subsubsection.4.1.2}%
+\contentsline {subsection}{\numberline {4.2}Modelaci\'on de los agentes}{10}{subsection.4.2}%
+\contentsline {section}{\numberline {5}Agentes Inteligentes}{11}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Prophet}{11}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Judge}{11}{subsection.5.2}%
+\contentsline {section}{\numberline {6}Resultados obtenidos}{12}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Configuraci\'on b\'asica o por defecto}{12}{subsection.6.1}%
+\contentsline {subsubsection}{\numberline {6.1.1}Configuraci\'on inicial}{12}{subsubsection.6.1.1}%
+\contentsline {subsubsection}{\numberline {6.1.2}Resultados}{12}{subsubsection.6.1.2}%
+\contentsline {subsubsection}{\numberline {6.1.3}Gr\'aficas}{12}{subsubsection.6.1.3}%
+\contentsline {subsection}{\numberline {6.2}Menor tolerancia al robo}{13}{subsection.6.2}%
+\contentsline {subsubsection}{\numberline {6.2.1}Configuraci\'on inicial}{13}{subsubsection.6.2.1}%
+\contentsline {subsubsection}{\numberline {6.2.2}Resultados}{13}{subsubsection.6.2.2}%
+\contentsline {subsubsection}{\numberline {6.2.3}Gr\'aficas}{13}{subsubsection.6.2.3}%
+\contentsline {subsection}{\numberline {6.3}Mayor Ruido}{14}{subsection.6.3}%
+\contentsline {subsubsection}{\numberline {6.3.1}Configuraci\'on inicial}{14}{subsubsection.6.3.1}%
+\contentsline {subsubsection}{\numberline {6.3.2}Resultados}{14}{subsubsection.6.3.2}%
+\contentsline {subsection}{\numberline {6.4}Modificando la poblaci\'on}{14}{subsection.6.4}%
+\contentsline {subsubsection}{\numberline {6.4.1}Configuraci\'on inicial}{14}{subsubsection.6.4.1}%
+\contentsline {subsubsection}{\numberline {6.4.2}Resultados}{15}{subsubsection.6.4.2}%
+\contentsline {subsubsection}{\numberline {6.4.3}Gr\'aficas}{15}{subsubsection.6.4.3}%
+\contentsline {subsection}{\numberline {6.5}Modificando la poblaci\'on 2.0}{15}{subsection.6.5}%
+\contentsline {subsubsection}{\numberline {6.5.1}Configuraci\'on inicial}{15}{subsubsection.6.5.1}%
+\contentsline {subsubsection}{\numberline {6.5.2}Resultados}{15}{subsubsection.6.5.2}%
+\contentsline {subsubsection}{\numberline {6.5.3}Gr\'aficas}{16}{subsubsection.6.5.3}%
+\contentsline {section}{\numberline {7}El Edena Ruh}{17}{section.7}%
+\contentsline {subsection}{\numberline {7.1}El prompt}{17}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}La historia}{17}{subsection.7.2}%
+\contentsline {section}{\numberline {8}Conclusiones}{20}{section.8}%
