@@ -6,8 +6,9 @@ from agents.agent import (
     TipForTapAgent,
     TipForTapSecureAgent,
     ABRAgent,
-    SearchAgent,
-    Resentful,
+    # SearchAgent,
+    # Resentful,
+    # EAEAgent,
 )
 from event_generator import (
     EventGenerator,
@@ -115,9 +116,10 @@ class Simulator:
                             EnviromentInfo(
                                 self.enviroment.day,
                                 self.enviroment.lost_per_day,
-                                self.enviroment.public_resources[agent],
+                                self.enviroment.public_resources,
                                 self.enviroment.agents_alive,
                                 self.enviroment.trust_matrix,
+                                self.enviroment.global_reputation,
                             ),
                             visible_desitions,
                         )
@@ -260,6 +262,7 @@ class Simulator:
             return log
 
         else:
+
             group: list[int] = event.getEventInfo(agent).group
             desitions: dict[int, Action] = {
                 agent: self.enviroment.log[event][agent] for agent in group
@@ -281,6 +284,7 @@ class Simulator:
 
 
 def population_random_generator(length: int) -> list[Agent]:
+
     agent_classes = [
         PusilanimeAgent,
         ThiefAgent,
@@ -288,8 +292,8 @@ def population_random_generator(length: int) -> list[Agent]:
         TipForTapSecureAgent,
         RandomAgent,
         ABRAgent,
-        SearchAgent,
-        Resentful,
+        # SearchAgent,
+        # Resentful,
     ]
     return [random.choice(agent_classes)(i) for i in range(length)]
 
@@ -298,16 +302,16 @@ Simulator(
     population_random_generator(50),
     ProbabilisticEventGenerator(
         good_coop_resource_probability=0.8,
-        good_time_probabilities=0.8,
+        good_time_probabilities=0.7,
         coop_event_probability=0.9,
     ),
-    lost_per_day=100,
-    thief_toleration=0,
+    lost_per_day=80,
+    thief_toleration=1,
     reproduction_rate=20,
     reproduction_density=10,
-    global_visible_desitions=True,
-    noise=0.5,
+    global_visible_desitions=False,
+    noise=0.1,
 ).run(730, verbose=True)
 print("Escribiendo historia...\n")
-# print(make_history())
-input()
+print(make_history())
+# input()

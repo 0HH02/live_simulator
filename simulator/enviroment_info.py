@@ -16,15 +16,17 @@ class EnviromentInfo:
         self,
         day: int,
         lost_per_day: int,
-        public_resources: dict,
+        public_resources: list[int],
         agents_alive: list[int],
         matrix_of_trust: list[list[int]],
+        reputation: dict,
     ) -> None:
         self.day: int = day
         self.lost_per_day: int = lost_per_day
-        self.public_resources: dict = public_resources
-        self.agents_alive: list[int] = agents_alive
+        self.public_resources: list[int] = public_resources
+        self.agents_alive: list[int] = agents_alive.copy()
         self.matrix_of_trust: list[list[int]] = matrix_of_trust.copy()
+        self.reputation: dict = reputation.copy()
 
     def __str__(self) -> str:
         return f"Day: {self.day}\nLost per day: {self.lost_per_day}\nPublic resources: {self.public_resources}"

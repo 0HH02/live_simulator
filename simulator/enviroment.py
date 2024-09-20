@@ -82,6 +82,7 @@ class Enviroment:
             self.public_resources,
             self.agents_alive,
             self.trust_matrix,
+            self.global_reputation,
         )
 
     def next_day(self) -> None:
