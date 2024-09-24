@@ -136,226 +136,112 @@ class ABR(Desire):
         return Action.INACT
 
 
-# class Search(Desire):
-#     def __init__(self, id) -> None:
-#         self.reputation: dict[int, int] = {}
-#         self.agent_id = id
+class Search(Desire):
 
-#     def passive_action(
-#         self, enviroment_info: EnviromentInfo, decitions: dict[int, Action]
-#     ) -> None:
-#         for agent, action in decitions.items():
-#             if agent not in self.reputation:
-#                 self.reputation[agent] = 50
+    def decide(self, belive: dict, event_info: EventInfo) -> Action:
+        return self.best_play(
+            belive["resources"],
+            0 if len(belive["agents_alive"]) == 0 else 5,
+            belive["trust"],
+            belive["agents_alive"],
+        )[1]
 
-#             if action == Action.EXPLOIT:
-#                 self.reputation[agent] -= 30
-#             elif action == Action.COOP:
-#                 self.reputation[agent] += 10
-#             else:
-#                 self.reputation[agent] += 3
+    def best_play(
+        self,
+        resources: int,
+        deep: int,
+        reputation: dict[int, int],
+        agents_alive: list[int],
+    ) -> tuple[int, Action]:
+        if deep == 0:
+            return resources, Action.COOP
 
-#             self.reputation[agent] = max(self.reputation[agent], 0)
-#             self.reputation[agent] = min(self.reputation[agent], 100)
+        copy_reputation: dict[int, int] = reputation.copy()
+        copy_agents_alive: list[int] = agents_alive.copy()
+        group: list[int] = self.select_group(copy_agents_alive)
 
-#     def active_action(
-#         self, enviroment_info: EnviromentInfo, event: EventInfo
-#     ) -> Action:
-#         return self.best_play(
-#             enviroment_info.public_resources[self.agent_id],
-#             5,
-#             self.reputation,
-#             enviroment_info,
-#         )[1]
+        desitions = []
+        for agent in group:
+            if agent not in copy_reputation:
+                desitions.append(Action.COOP)
+                copy_reputation[agent] = 50
+            elif copy_reputation[agent] > 55:
+                desitions.append(Action.COOP)
+                copy_reputation[agent] += 10
+            elif copy_reputation[agent] < 40:
+                desitions.append(Action.EXPLOIT)
+                copy_reputation[agent] -= 30
+            else:
+                desitions.append(Action.INACT)
+                copy_reputation[agent] += 3
 
-#     def best_play(
-#         self,
-#         resources: int,
-#         deep: int,
-#         reputation: dict[int, int],
-#         enviroment: EnviromentInfo,
-#     ) -> tuple[int, Action]:
-#         copy_reputation: dict[int, int] = reputation.copy()
-#         if deep == 0:
-#             return resources, Action.COOP
+        event_resources: int = random.randint(-100, 300) * len(desitions)
 
-#         group: list[int] = self.select_group(enviroment.agents_alive)
-#         group: list[int] = self.select_groups_with_trust(
-#             enviroment.agents_alive, enviroment.matrix_of_trust
-#         )
+        # COOP
+        desitions.append(Action.COOP)
+        my_coop_resources = (
+            resources + group_prisioners_game(desitions, event_resources)[-1]
+        )
+        coop_reosurce: int = self.best_play(
+            my_coop_resources, deep - 1, copy_reputation, copy_agents_alive
+        )[0]
+        desitions.pop()
 
-#         desitions = []
-#         for agent in group:
-#             if agent not in copy_reputation:
-#                 desitions.append(Action.COOP)
-#                 copy_reputation[agent] = 50
-#             elif copy_reputation[agent] > 55:
-#                 desitions.append(Action.COOP)
-#                 copy_reputation[agent] += 10
-#             elif copy_reputation[agent] < 40:
-#                 desitions.append(Action.EXPLOIT)
-#                 copy_reputation[agent] -= 30
-#             else:
-#                 desitions.append(Action.INACT)
-#                 copy_reputation[agent] += 3
+        # INACT
+        desitions.append(Action.INACT)
+        my_inact_resources = (
+            resources + group_prisioners_game(desitions, event_resources)[-1]
+        )
+        inact_reosurce: int = self.best_play(
+            my_inact_resources, deep - 1, copy_reputation, copy_agents_alive
+        )[0]
+        desitions.pop()
+        # EXPLOIT
+        desitions.append(Action.EXPLOIT)
+        my_exploit_resources = (
+            resources + group_prisioners_game(desitions, event_resources)[-1]
+        )
+        exploit_reosurce: int = self.best_play(
+            my_exploit_resources, deep - 1, copy_reputation, copy_agents_alive
+        )[0]
+        desitions.pop()
 
-#         for agent in group:
-#             for other in group:
-#                 if agent != other:
-#                     if enviroment.matrix_of_trust[other] == Action.EXPLOIT:
-#                         enviroment.matrix_of_trust[agent][other] -= 0.2
-#                     elif enviroment.matrix_of_trust[other] == Action.INACT:
-#                         enviroment.matrix_of_trust[agent][other] += 0.05
-#                     elif enviroment.matrix_of_trust[other] == Action.COOP:
-#                         enviroment.matrix_of_trust[agent][other] += 0.1
+        if coop_reosurce > inact_reosurce and coop_reosurce > exploit_reosurce:
+            return coop_reosurce, Action.COOP
+        elif inact_reosurce > exploit_reosurce:
+            return inact_reosurce, Action.INACT
+        else:
+            return exploit_reosurce, Action.EXPLOIT
 
-#         event_resources: int = random.randint(-100, 300) * len(desitions)
-
-#         # COOP
-#         desitions.append(Action.COOP)
-#         my_coop_resources = (
-#             resources + group_prisioners_game(desitions, event_resources)[-1]
-#         )
-#         coop_reosurce: int = self.best_play(
-#             my_coop_resources, deep - 1, copy_reputation, enviroment
-#         )[0]
-#         desitions.pop()
-
-#         # INACT
-#         desitions.append(Action.INACT)
-#         my_inact_resources = (
-#             resources + group_prisioners_game(desitions, event_resources)[-1]
-#         )
-#         inact_reosurce: int = self.best_play(
-#             my_inact_resources, deep - 1, copy_reputation, enviroment
-#         )[0]
-#         desitions.pop()
-#         # EXPLOIT
-#         desitions.append(Action.EXPLOIT)
-#         my_exploit_resources = (
-#             resources + group_prisioners_game(desitions, event_resources)[-1]
-#         )
-#         exploit_reosurce: int = self.best_play(
-#             my_exploit_resources, deep - 1, copy_reputation, enviroment
-#         )[0]
-#         desitions.pop()
-
-#         if coop_reosurce > inact_reosurce and coop_reosurce > exploit_reosurce:
-#             return coop_reosurce, Action.COOP
-#         elif inact_reosurce > exploit_reosurce:
-#             return inact_reosurce, Action.INACT
-#         else:
-#             return exploit_reosurce, Action.EXPLOIT
-
-#     def ordenar_por_posiciones(self, array: list[int]) -> list[int]:
-#         arr: list[int] = array.copy()
-#         # Paso 2: Crear una lista de pares (valor, índice)
-#         pares: list[tuple[int, int]] = [
-#             (valor, indice) for indice, valor in enumerate(arr)
-#         ]
-
-#         # Paso 3: Ordenar la lista de pares en orden descendente por el valor
-#         pares_ordenados: list[tuple[int, int]] = sorted(
-#             pares, key=lambda x: x[0], reverse=True
-#         )
-
-#         # Paso 4: Extraer los índices ordenados
-#         indices_ordenados: list[int] = [par[1] for par in pares_ordenados]
-
-#         # Paso 5: Devolver los índices ordenados
-#         return indices_ordenados
-
-#     def select_groups_with_trust(self, agents, matrix) -> list[list[int]]:
-#         agents: list[int] = agents.copy()
-#         random.shuffle(agents)
-#         result: list[list[int]] = []
-#         while agents:
-#             rand: int = poisson(lam=5)
-#             group = []
-#             group.append(agents[0])
-#             indices_ordenados: list[int] = self.ordenar_por_posiciones(
-#                 matrix[agents[0]]
-#             )
-#             for i in range(len(indices_ordenados)):
-#                 if rand == 0:
-#                     break
-#                 for roommate in group:
-#                     if not (
-#                         indices_ordenados[i] != roommate
-#                         and indices_ordenados[i] in agents
-#                         and random.random() < matrix[roommate][indices_ordenados[i]]
-#                     ):
-#                         break
-#                 else:
-#                     group.append(indices_ordenados[i])
-#                     agents.remove(indices_ordenados[i])
-#                     rand -= 1
-
-#             result.append(group)
-#             agents.remove(agents[0])
-#         for group in result:
-#             if self.agent_id in group:
-#                 return group
-#         return []
-
-#     def select_group(self, agents_alive: list[int]) -> list[int]:
-#         agents: list[int] = agents_alive.copy()
-#         random.shuffle(agents)
-#         rand: int = poisson(lam=5)
-#         start: int = random.randint(0, len(agents))
-#         end: int = min(start + rand, len(agents))
-#         return agents[start:end]
+    def select_group(self, agents_alive: list[int]) -> list[int]:
+        agents: list[int] = agents_alive.copy()
+        random.shuffle(agents)
+        rand: int = poisson(lam=5)
+        start: int = random.randint(0, len(agents))
+        end: int = min(start + rand, len(agents))
+        return agents[start:end]
 
 
-# class Resentful(Desire):
-#     def __init__(self, id) -> None:
-#         self.bad_people: list[int] = []
-#         self.agent_id = id
+class Resentful(Desire):
 
-#     def passive_action(
-#         self, enviroment_info: EnviromentInfo, decitions: dict[int, Action]
-#     ) -> None:
-#         for agent, action in decitions.items():
-#             if agent not in self.bad_people and action == Action.EXPLOIT:
-#                 self.bad_people.append(agent)
-
-#     def active_action(
-#         self, enviroment_info: EnviromentInfo, event: EventInfo
-#     ) -> Action:
-#         for agent in event.group:
-#             if agent in self.bad_people:
-#                 return Action.INACT
-#         return Action.COOP
+    def decide(self, belive: dict, event_info: EventInfo) -> Action:
+        for agent in event_info.group:
+            if agent in belive["betrayers"]:
+                return Action.INACT
+        return Action.COOP
 
 
-# class EAE(Desire):
-#     def __init__(self, id) -> None:
-#         self.actual_resource = 0
-#         self.my_desitions: dict[Action, list[int]] = {
-#             Action.COOP: [0],
-#             Action.EXPLOIT: [0],
-#             Action.INACT: [0],
-#         }
-#         self.agent_id = id
+class Explote(Desire):
 
-#     def passive_action(
-#         self, enviroment_info: EnviromentInfo, decitions: dict[int, Action]
-#     ) -> None:
-#         print(decitions)
-#         self.my_desitions[decitions[self.agent_id]].append(
-#             enviroment_info.public_resources[self.agent_id] - self.actual_resource
-#         )
-#         self.actual_resource = enviroment_info.public_resources[self.agent_id]
+    def decide(self, belive: dict, event_info: EventInfo) -> Action:
+        print(belive["best_action"])
+        print(np.mean(belive["best_action"][Action.COOP]))
+        print(np.mean(belive["best_action"][Action.INACT]))
+        print(np.mean(belive["best_action"][Action.EXPLOIT]))
 
-#     def active_action(
-#         self, enviroment_info: EnviromentInfo, event: EventInfo
-#     ) -> Action:
-#         if random.random() < 0.8:
-#             return max(
-#                 self.my_desitions.keys(), key=lambda x: np.mean(self.my_desitions[x])
-#             )
-
-#         return random.choice(list(Action))
+        return max(
+            belive["best_action"], key=lambda x: np.mean(belive["best_action"].get(x))
+        )
 
 
 # Jugador que juegue random o juega la jugada que le ha hecho ganar más puntos en el pasado
@@ -375,6 +261,7 @@ class BDIAgent(Agent):
                 Action.INACT: [],
             },  # Acción que más recursos aportó
             "global_actions": {},  # Acción que más recursos aportó
+            "agents_alive": [],
         }
         self.desires: dict[str, int] = desires  # Lista de deseos (objetivos)
         self.intentions: dict[Action, int] = {
@@ -412,6 +299,8 @@ class BDIAgent(Agent):
                 else:
                     self.beliefs["global_actions"][agent_id].append(desitions)
 
+        self.beliefs["agents_alive"] = enviroment_info.agents_alive.copy()
+
         # if self.agent_id not in self.beliefs["best_action"]:
         #     self.beliefs["best_action"][visible_desitions[self.agent_id]] = [
         #         enviroment_info.public_resources[self.agent_id]
@@ -446,19 +335,17 @@ class BDIAgent(Agent):
                 intentions[Random().decide(self.beliefs, event_info)] += weights
             elif desire == "ABR":
                 intentions[ABR().decide(self.beliefs, event_info)] += weights
-            # elif desire == "Search":
-            #     Search().decide(self.beliefs, event_info)
-            # elif desire == "Resentful":
-            #     Resentful().decide(self.beliefs, event_info)
-            # elif desire == "EAE":
-            #     EAE().decide(self.beliefs, event_info)
+            elif desire == "Search":
+                intentions[Search().decide(self.beliefs, event_info)] += weights
+            elif desire == "Resentful":
+                intentions[Resentful().decide(self.beliefs, event_info)] += weights
+            elif desire == "Explote":
+                intentions[Explote().decide(self.beliefs, event_info)] += weights
         return max(intentions, key=intentions.get)
 
     def active_action(
         self, enviroment_info: EnviromentInfo, event_info: EventInfo
     ) -> Action:
-        # self.simulate_future()
-
         action: Action = self.decide_action_based_on_beliefs_and_desires(event_info)
 
         return action
@@ -494,9 +381,9 @@ class TipForTapSecureAgent(BDIAgent):
         super().__init__(agent_id, {"TipForTapSecure": 1})
 
 
-# class RandomAgent(BDIAgent):
-#     def __init__(self, agent_id: int):
-#         super().__init__(agent_id, {"Random": 1})
+class ExploteAgent(BDIAgent):
+    def __init__(self, agent_id: int):
+        super().__init__(agent_id, {"Explote": 1})
 
 
 class ABRAgent(BDIAgent):
@@ -504,10 +391,11 @@ class ABRAgent(BDIAgent):
         super().__init__(agent_id, {"ABR": 1})
 
 
-# class SearchAgent(BDIAgent):
-#     def __init__(self, agent_id: int):
-#         super().__init__(agent_id, {"Search": 1})
+class SearchAgent(BDIAgent):
+    def __init__(self, agent_id: int):
+        super().__init__(agent_id, {"Search": 1})
 
-# class ResentfulAgent(BDIAgent):
-#     def __init__(self, agent_id: int):
-#         super().__init__(agent_id, {"Resentful": 1})
+
+class ResentfulAgent(BDIAgent):
+    def __init__(self, agent_id: int):
+        super().__init__(agent_id, {"Resentful": 1})

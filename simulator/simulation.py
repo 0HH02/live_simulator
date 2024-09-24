@@ -6,9 +6,9 @@ from agents.agent import (
     TipForTapAgent,
     TipForTapSecureAgent,
     ABRAgent,
-    # SearchAgent,
-    # Resentful,
-    # EAEAgent,
+    SearchAgent,
+    ResentfulAgent,
+    ExploteAgent,
 )
 from event_generator import (
     EventGenerator,
@@ -251,9 +251,6 @@ class Simulator:
     ) -> dict[int, Action]:
         if get_all:
             log = self.enviroment.log[event].copy()
-            if agent in log:
-                log.pop(agent)
-
             # Add missunderstanding with 10% probability
             for ag in log:
                 if random.random() < noise:
@@ -292,8 +289,9 @@ def population_random_generator(length: int) -> list[Agent]:
         TipForTapSecureAgent,
         RandomAgent,
         ABRAgent,
-        # SearchAgent,
-        # Resentful,
+        SearchAgent,
+        ResentfulAgent,
+        ExploteAgent,
     ]
     return [random.choice(agent_classes)(i) for i in range(length)]
 

@@ -23,7 +23,8 @@ class Stats:
             "TipForTapSecureAgent": "brown",
             "RandomAgent": "purple",
             "SearchAgent": "yellow",
-            "Resentful": "magenta",
+            "ResentfulAgent": "magenta",
+            "ExploteAgent": "cyan",
         }
 
         # Activar el modo interactivo
