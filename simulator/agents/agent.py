@@ -234,11 +234,6 @@ class Resentful(Desire):
 class Explote(Desire):
 
     def decide(self, belive: dict, event_info: EventInfo) -> Action:
-        print(belive["best_action"])
-        print(np.mean(belive["best_action"][Action.COOP]))
-        print(np.mean(belive["best_action"][Action.INACT]))
-        print(np.mean(belive["best_action"][Action.EXPLOIT]))
-
         return max(
             belive["best_action"], key=lambda x: np.mean(belive["best_action"].get(x))
         )

@@ -65,14 +65,53 @@ class Simulator:
         self.reproduction_rate: int = reproduction_rate
         self.reproduction_density: int = reproduction_density
         self.global_visible_desitions: bool = global_visible_desitions
+        self.record_days: list[int] = [1, 90, 180, 270, 360, 450, 540, 630, 720]
+        self.summary_data: list = []
+        self.total_thefts = 0
         self.noise: float = noise
+
+    def collect_summary_data(self, day):
+        agents_alive = self.enviroment.agents_alive
+        public_resources = self.enviroment.public_resources
+
+        # Calcular recursos totales y promedio
+        total_resources = sum([public_resources[agent] for agent in agents_alive])
+        avg_resources = total_resources / len(agents_alive) if agents_alive else 0
+
+        # Contar agentes por tipo
+        agent_type_counts = {}
+        agent_type_resources = {}
+        for agent_id in agents_alive:
+            agent_type = type(self.enviroment.agents[agent_id]).__name__
+            agent_type_counts[agent_type] = agent_type_counts.get(agent_type, 0) + 1
+            agent_type_resources.setdefault(agent_type, []).append(
+                public_resources[agent_id]
+            )
+
+        # Calcular recursos promedio por tipo de agente
+        agent_type_avg_resources = {}
+        for agent_type, resources in agent_type_resources.items():
+            agent_type_avg_resources[agent_type] = sum(resources) / len(resources)
+
+        # Crear un diccionario con los datos recopilados
+        data = {
+            "day": day,
+            "avg_resources": avg_resources,
+            "agent_type_counts": agent_type_counts,
+            "total_thefts": self.total_thefts,
+            "agents_alive": len(agents_alive),
+            "agent_type_avg_resources": agent_type_avg_resources,
+        }
+
+        # Añadir el diccionario a la lista summary_data
+        self.summary_data.append(data)
 
     def run(self, days: int, verbose=False) -> dict:
         for _ in range(days):
 
             self.enviroment.next_day()
             # if verbose:
-            print("Day: ", self.enviroment.day)
+            # print("Day: ", self.enviroment.day)
             new_event: Event = self.event_generator.GetNewEvent(
                 self.enviroment.agents_alive,
                 self.thief_toleration,
@@ -127,15 +166,19 @@ class Simulator:
                 print(f"Public resources: {self.enviroment.public_resources}")
             if not self.enviroment.agents_alive:
                 return self.enviroment.log
-            if new_event.event_type == EventType.COOP:
-                self.stats.plot_agent_resources(new_event, self.enviroment)
+            # Graficas:
+            # if new_event.event_type == EventType.COOP:
+            #     self.stats.plot_agent_resources(new_event, self.enviroment)
+
+            if self.enviroment.day in self.record_days:
+                self.collect_summary_data(self.enviroment.day)
 
         if verbose:
             print(dict_to_string(self.enviroment.log, self.enviroment.agents))
         with open("log.txt", "w", encoding="ISO-8859-1") as f:
             f.write(dict_to_string(self.enviroment.log, self.enviroment.agents))
 
-        return self.enviroment.log
+        return {"log": self.enviroment.log, "summary_data": self.summary_data}
 
     def update_enviroment(self, resources) -> None:
 
@@ -206,6 +249,10 @@ class Simulator:
                     enviroment_info, event_info
                 )
                 self.enviroment.log[new_event][agent] = action
+
+                if action == Action.EXPLOIT:
+                    self.total_thefts += 1
+
                 self.set_reputation(agent, action)
                 if verbose:
                     print(
@@ -281,7 +328,6 @@ class Simulator:
 
 
 def population_random_generator(length: int) -> list[Agent]:
-
     agent_classes = [
         PusilanimeAgent,
         ThiefAgent,
@@ -294,22 +340,3 @@ def population_random_generator(length: int) -> list[Agent]:
         ExploteAgent,
     ]
     return [random.choice(agent_classes)(i) for i in range(length)]
-
-
-Simulator(
-    population_random_generator(50),
-    ProbabilisticEventGenerator(
-        good_coop_resource_probability=0.8,
-        good_time_probabilities=0.7,
-        coop_event_probability=0.9,
-    ),
-    lost_per_day=80,
-    thief_toleration=1,
-    reproduction_rate=20,
-    reproduction_density=10,
-    global_visible_desitions=False,
-    noise=0.1,
-).run(730, verbose=True)
-print("Escribiendo historia...\n")
-print(make_history())
-# input()
