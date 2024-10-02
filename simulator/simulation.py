@@ -1,5 +1,6 @@
 from agents.agent import (
     Agent,
+    BDIAgent,
     PusilanimeAgent,
     RandomAgent,
     ThiefAgent,
@@ -54,6 +55,7 @@ class Simulator:
         thief_toleration: int,
         reproduction_rate: int,
         reproduction_density: int,
+        max_population: int,
         global_visible_desitions: bool,
         noise: float,
     ) -> None:
@@ -64,6 +66,7 @@ class Simulator:
         self.thief_toleration: int = thief_toleration
         self.reproduction_rate: int = reproduction_rate
         self.reproduction_density: int = reproduction_density
+        self.max_population: int = max_population
         self.global_visible_desitions: bool = global_visible_desitions
         self.record_days: list[int] = [1, 90, 180, 270, 360, 450, 540, 630, 720]
         self.summary_data: list = []
@@ -103,8 +106,7 @@ class Simulator:
             "agent_type_avg_resources": agent_type_avg_resources,
         }
 
-        # Añadir el diccionario a la lista summary_data
-        self.summary_data.append(data)
+        return data
 
     def run(self, days: int, verbose=False) -> dict:
         for _ in range(days):
@@ -170,8 +172,11 @@ class Simulator:
             if new_event.event_type == EventType.COOP:
                 self.stats.plot_agent_resources(new_event, self.enviroment)
 
+            self.actual_summary_data = self.collect_summary_data(self.enviroment.day)
+
             if self.enviroment.day in self.record_days:
-                self.collect_summary_data(self.enviroment.day)
+                # Añadir el diccionario a la lista summary_data
+                self.summary_data.append(self.actual_summary_data)
 
         if verbose:
             print(dict_to_string(self.enviroment.log, self.enviroment.agents))
@@ -188,41 +193,91 @@ class Simulator:
         for agent in self.enviroment.agents_alive:
             self.enviroment.public_resources[agent] -= self.lost_per_day
 
+        # Reproduction
+        if self.enviroment.day % self.reproduction_rate == 0:
+
+            agent_type_avg_resources = self.actual_summary_data[
+                "agent_type_avg_resources"
+            ]
+            total_avg_resources = sum(agent_type_avg_resources.values())
+            agent_type_probabilities = {
+                agent_type: avg_resources / total_avg_resources
+                for agent_type, avg_resources in agent_type_avg_resources.items()
+            }
+
+            new_agents = []
+            for _ in range(self.reproduction_density):
+
+                agent_type = random.choices(
+                    list(agent_type_probabilities.keys()),
+                    weights=list(agent_type_probabilities.values()),
+                    k=1,
+                )[0]
+                agent_class: Agent = next(
+                    cls
+                    for cls in BDIAgent.__subclasses__()
+                    if cls.__name__ == agent_type
+                )
+                new_agents.append(
+                    agent_class(len(self.enviroment.agents) + len(new_agents))
+                )
+
+            self.add_agents(new_agents)
+
+        # Eliminar los n agentes con menos recursos
+        overpopulation = len(self.enviroment.agents_alive) - self.max_population
+        if overpopulation > 0:
+            sorted_agents: list[int] = sorted(
+                self.enviroment.agents_alive,
+                key=lambda agent: self.enviroment.public_resources[agent],
+            )
+            agents_to_remove: list[int] = sorted_agents[:overpopulation]
+            for agent in agents_to_remove:
+                self.enviroment.public_resources[agent] = 0
+
         self.enviroment.agents_alive = [
             agent
             for agent in self.enviroment.agents_alive
             if self.enviroment.public_resources[agent] > 0
         ]
-        if self.enviroment.day % self.reproduction_rate == 0:
 
-            alive_agents_with_resources = {
-                agent: self.enviroment.public_resources[agent]
-                for agent in self.enviroment.agents_alive
-            }
+    def add_agents(self, new_agents):
 
-            sorted_agents: list[tuple[int, int]] = sorted(
-                alive_agents_with_resources.items(), key=lambda x: x[1], reverse=True
-            )
+        new_agents_count: int = len(new_agents)
 
-            top_agents: list[int] = [
-                agent for agent, _ in sorted_agents[: self.reproduction_density + 1]
-            ]
-
-            new_agents: list[Agent] = self.enviroment.agents[:]
-
-            if self.reproduction_density > len(top_agents):
-                new_agents.extend(
-                    [
-                        self.enviroment.agents[top_agents[0]]
-                        for i in range(self.reproduction_density - len(top_agents) + 1)
-                    ]
+        # Add the new agents to the list of alive agents
+        self.enviroment.agents_alive.extend(
+            list(
+                range(
+                    len(self.enviroment.agents),
+                    len(self.enviroment.agents) + new_agents_count,
                 )
-
-            new_agents.extend([self.enviroment.agents[agent] for agent in top_agents])
-
-            self.enviroment: Enviroment = self.enviroment.copy(
-                new_agents=new_agents, reproduction_density=self.reproduction_density
             )
+        )
+
+        # Add the new agents to the public resources with a little variation
+        agent_type_avg_resources = self.actual_summary_data["agent_type_avg_resources"]
+        for new_agent in new_agents:
+            agent_type = type(new_agent).__name__
+            avg_resources = agent_type_avg_resources.get(agent_type, 450)
+            variation = random.uniform(-0.1, 0.1)  # 10% variation
+            self.enviroment.public_resources.append(
+                int(avg_resources * (1 + variation))
+            )
+
+        # Extend the trust matrix for existing agents
+        for row in self.enviroment.trust_matrix:
+            row.extend([50] * new_agents_count)
+
+        # Add new rows for the new agents
+        self.enviroment.trust_matrix.extend(
+            [[50] * (len(self.enviroment.agents) + new_agents_count)] * new_agents_count
+        )
+
+        # Add the new agents to the list
+        self.enviroment.agents.extend(new_agents)
+
+        self.enviroment.generation += 1
 
     def play_the_game(self, new_event: Event) -> dict:
         general_resources = {}

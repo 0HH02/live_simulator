@@ -39,6 +39,7 @@ def run_single_simulation(args):
         thief_toleration=simulation_params["thief_toleration"],
         reproduction_rate=simulation_params["reproduction_rate"],
         reproduction_density=simulation_params["reproduction_density"],
+        max_population=simulation_params["max_population"],
         global_visible_desitions=simulation_params["global_visible_desitions"],
         noise=simulation_params["noise"],
     )
@@ -132,14 +133,15 @@ def save_simulation_summary(simulation_results):
 
 def main():
     simulation_params = {
-        "population_size": 50,
+        "population_size": 80,
         "good_coop_resource_probability": 0.8,
         "good_time_probabilities": 0.7,
         "coop_event_probability": 0.9,
-        "lost_per_day": 80,
+        "lost_per_day": 100,
         "thief_toleration": 1,
-        "reproduction_rate": 20,
+        "reproduction_rate": 10,
         "reproduction_density": 10,
+        "max_population": 100,
         "global_visible_desitions": False,
         "noise": 0.1,
         "days": 360,
