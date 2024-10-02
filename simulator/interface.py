@@ -142,10 +142,10 @@ def main():
         "reproduction_density": 10,
         "global_visible_desitions": False,
         "noise": 0.1,
-        "days": 720,
+        "days": 360,
     }
 
-    num_simulations = 200
+    num_simulations = 1
     simulation_numbers = list(range(1, num_simulations + 1))
 
     # Crear una lista de argumentos para mapear
@@ -159,15 +159,16 @@ def main():
     )
 
     # Usar Pool para ejecutar simulaciones en paralelo
-    with Pool(processes=num_processes) as pool:
-        simulation_results = list(
-            tqdm(
-                pool.imap_unordered(run_single_simulation, args_list),
-                total=num_simulations,
-            )
-        )
+    run_single_simulation((simulation_params, 1))
+    # with Pool(processes=num_processes) as pool:
+    #     simulation_results = list(
+    #         tqdm(
+    #             pool.imap_unordered(run_single_simulation, args_list),
+    #             total=num_simulations,
+    #         )
+    #     )
 
-    save_simulation_summary(simulation_results)
+    # save_simulation_summary(simulation_results)
 
 
 if __name__ == "__main__":

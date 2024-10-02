@@ -167,8 +167,8 @@ class Simulator:
             if not self.enviroment.agents_alive:
                 return self.enviroment.log
             # Graficas:
-            # if new_event.event_type == EventType.COOP:
-            #     self.stats.plot_agent_resources(new_event, self.enviroment)
+            if new_event.event_type == EventType.COOP:
+                self.stats.plot_agent_resources(new_event, self.enviroment)
 
             if self.enviroment.day in self.record_days:
                 self.collect_summary_data(self.enviroment.day)
