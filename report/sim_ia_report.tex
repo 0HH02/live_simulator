@@ -207,7 +207,19 @@ Y estos son los par\'ametros de la simulaci\'on que se pueden modificar para obt
 
 
 \subsection{Modelaci\'on de los agentes}
-A continuaci\'on vamos a caracterizar los tipos de agentes de nuestra simulaci\'on:
+
+\subsubsection{Arquitectura de los agentes}
+Se emple\'o una arquitectura BDI para los agentes, de forma que cada agente tuviera una serie de creencias, deseos e intenciones. Las creencias son la informaci\'on que recibe 
+el agente del entorno, en este caso ser\'{\i}a la informaci\'on que hemos mencionado anteriormente. Los deseos son estrategias que determina como le gustar\'{\i}a actuar al agente.
+este caso tenemos concebidos las estrategias tales que cada estrategia define una decisio\'on en cada ronda. ¿Entonces c\'omo un agente escoge sus intenciones en base a varios deseos?. 
+¿Y qu\'e pasa con los deseos contradictorios?. Pues la forma de decidir las intenciones de estos agentes es a trav\'es de una ponderaci\'on de cada deseos en base a como se cre\'o cada agente. 
+En este caso es como las personalidades de un individuo, cada persona tiene matices y deseos que pueden llevarlo a tomar diferentes decisiones en la vida, todos tienen un poco de maldad o bondad. 
+Y es solo dependiendo de tus carater\'{\i}sticas o en este caso configuraciones que decides a cu\'al le das m\'as importancia. Y asi cada agente determina que acci\'on tomar en cada ronda, en base 
+a que decisiones querr\'{\i}a tomar en base a cada deseo y que importancia le da a cada deseo. 
+ 
+
+
+\subsubsection{clasificaci\'on de los agentes}
 \begin{itemize}
       \item Primero tenemos a los agentes simples como always cooperate, always cheat y random que son agentes que sus decisiones no dependen del entorno
             ni de las acciones pasadas. Juegan de forma determinista, por lo que se clasificar\'{\i}an como \textbf{agentes puramente reactivos}.
