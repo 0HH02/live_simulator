@@ -34,9 +34,7 @@ class Event:
     def getEventInfo(self, agent_id: int) -> EventInfo:
         for group in self.groups:
             if agent_id in group:
-                new_group: list[int] = group.copy()
-                new_group.remove(agent_id)
-                return EventInfo(self.event_type, new_group, self.resources)
+                return EventInfo(self.event_type, group.copy(), self.resources)
         raise ValueError("The agent is not in the event.")
 
 
